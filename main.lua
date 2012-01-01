@@ -141,13 +141,23 @@ function love.load()
 	crash2 = love.audio.newSource("sounds/crash-02.wav", "static")
 	crash3 = love.audio.newSource("sounds/crash-03.wav", "static")
 
+	screech1 = love.audio.newSource("sounds/screech.wav", "static")
+	screech1:setVolume(0.2)
+	screech1:setLooping(true)
+
+	screech2 = love.audio.newSource("sounds/screech.wav", "static")
+	screech2:setVolume(0.2)
+	screech2:setLooping(true)
+
+	tire_mark = love.graphics.newImage("tiremark.png")
+	tire_mark_list = {}
+	fans = love.graphics.newImage("fans.png")
 end
 
 function love.draw()
     love.graphics.clear()
 
     --draw the fans
-    fans = love.graphics.newImage("fans.png")
     love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
 
     --draw the cars
@@ -198,10 +208,14 @@ end
 local function shouldScreech(car_body)
 	velocity_x, velocity_y = car_body:getLinearVelocity()
 	velocity_angle = math.atan2(velocity_y, velocity_x)
-	if math.abs(velocity_y) + math.abs(velocity_y) < 30 then
+	if math.abs(velocity_y) + math.abs(velocity_y) < 60 then
 		return nil
 	end
 	return difference(velocity_angle, car_body:getAngle()) > math.rad(40)
+end
+
+local function tireMarks(car_body)
+
 end
 
 function love.update()
@@ -242,21 +256,23 @@ function love.update()
 
 	if shouldScreech(blue_car_body) then
 		if not blue_car_screeching then
-			--start the screeching
+			screech1:play()
 		end
+		tireMarks(blue_car_body)
 		blue_car_screeching = true
 	elseif blue_car_screeching then
-		-- end the screeching
+		screech1:stop()
 		blue_car_screeching = false
 	end
 
 	if shouldScreech(red_car_body) then
 		if not red_car_screeching then
-			--start the screeching
+			screech1:play()
 		end
+		tireMarks(red_car_body)
 		red_car_screeching = true
 	elseif red_car_screeching then
-		-- end the screeching
+		screech1:stop()
 		red_car_screeching = false
 	end
 end
