@@ -15,10 +15,12 @@ Car.static.ANGULAR_DAMPING = 3
 Car.static.WIDTH = 64
 Car.static.HEIGHT = 26
 
+Car.static.IMAGE = "car.png"
+
 Car.static.INFO = {
-			        {image="red.png", data="red car",
+			        {color={255,0,0}, data="red car",
 			          keys={left="a", right="d", up="w", down="s"}},
-			        {image="blue.png", data="blue car",
+			        {color={0,0,255}, data="blue car",
 			          keys={left="left", right="right", up="up", down="down"}}}
 Car.static.STARTS = {[2]={
 					    {x=250, y=350, angle=0},
@@ -37,10 +39,11 @@ function Car:initialize(player, no_of_players, world)
 	self.shape = love.physics.newRectangleShape(self.body, 0, 0, self.class.WIDTH,
 												self.class.HEIGHT)
 
-	local info = self.class.INFO
-	self.shape:setData(info[player].data)
-	self.image = love.graphics.newImage("images/"..info[player].image)
-	self.keys = info[player].keys
+	local info = self.class.INFO[player]
+	self.color = info.color
+	self.shape:setData(info.data)
+	self.image = love.graphics.newImage("images/"..self.class.IMAGE)
+	self.keys = info.keys
 end
 
 function Car:update()
@@ -59,10 +62,16 @@ function Car:update()
 end
 
 function Car:draw()
+	local oldColor = {love.graphics.getColor()}
+	love.graphics.setColor(unpack(self.color))
+
 	local offset = self.class.WIDTH/2
 	local world_x, world_y = self.body:getWorldPoint(0,0)
+
 	love.graphics.draw(self.image, world_x, world_y, self.body:getAngle(), 1, 1,
 					   offset, offset)
+
+	love.graphics.setColor(unpack(oldColor))
 end
 
 return Car
