@@ -1,0 +1,27 @@
+to do list
+
+fix tire mark locations
+
+damage to car
+	eventual explosion
+	more sparks as car gets damaged
+	smoke
+	pieces of car fly off
+	bumpers
+		collisions to front take little damage
+	car armor
+		decrease speed
+		increase survivability
+	really damaged cars spew smoke
+	6 damage zones
+	hud for car damage zones
+	one zone destroyed: boom!
+
+customization of car attributes
+	max number of "points" to spend on different attributes
+
+better nets
+	polygon shape or mutliple rectangles
+
+debug mode
+
