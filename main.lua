@@ -22,6 +22,12 @@ function collide(a, b)
 		playGoal()
 		red_score = red_score + 1
 		resetBall()
+	end	
+	if objects["blue car"] and objects["red car"] then
+		crash3:play()
+	end
+	if objects["boundary"] then
+		playCrash()
 	end
 end
 
@@ -36,6 +42,18 @@ function playGoal()
 	if rnum == 3 then 
 		cheer3:play()
 	end
+end	
+
+function playCrash()
+		rnum = math.random(3)
+		if rnum == 1 then
+			crash2:stop()
+			crash1:play()
+		end
+		if rnum == 2 then
+			crash1:stop()
+			crash2:play()
+		end
 end	
 
 function love.load()
@@ -97,9 +115,13 @@ function love.load()
 
 	love.graphics.setFont(love.graphics.newFont(20))
 
-	cheer1 = love.audio.newSource("sounds/cheer-01.wav")
-	cheer2 = love.audio.newSource("sounds/cheer-03.wav")
-	cheer3 = love.audio.newSource("sounds/kids-cheer-01.wav")
+	cheer1 = love.audio.newSource("sounds/cheer-01.wav", "static")
+	cheer2 = love.audio.newSource("sounds/cheer-03.wav", "static")
+	cheer3 = love.audio.newSource("sounds/kids-cheer-01.wav", "static")
+
+	crash1 = love.audio.newSource("sounds/crash-01.wav", "static")
+	crash2 = love.audio.newSource("sounds/crash-02.wav", "static")
+	crash3 = love.audio.newSource("sounds/crash-03.wav", "static")
 
 end
 
