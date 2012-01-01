@@ -48,6 +48,7 @@ function playGoal()
 	if rnum == 3 then
 		cheer3:play()
 	end
+	fanpic = "cheer1.png"
 end
 
 function playCrash()
@@ -151,13 +152,29 @@ function love.load()
 
 	tire_mark = love.graphics.newImage("tiremark.png")
 	tire_mark_list = {}
-	fans = love.graphics.newImage("fans.png")
 end
+
+fanpic = "fans.png"
+fanint = 0
 
 function love.draw()
     love.graphics.clear()
 
     --draw the fans
+    if fanpic ~= "fans.png" then
+	fanint = fanint + 1
+	if fanint > 30 and fanint <= 60 then
+	     fanpic = "cheer2.png"
+	end
+	if fanint > 60 and fanint <= 90 then
+	     fanpic = "cheer3.png"
+	end
+	if fanint > 90 then
+	     fanpic = "fans.png"
+	     fanint = 0
+	end
+    end
+    fans = love.graphics.newImage(fanpic)
     love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
 
     --draw the cars
