@@ -1,6 +1,7 @@
 require "math"
 require "table"
 local Car = require "car"
+local Monster = require "car"
 
 local function resetBall()
     ball_body:setPosition(400, 350)
@@ -279,6 +280,10 @@ local function tireMarks(car_body)
     end
 end
 
+local function carSwitch(car)
+--	blue_car
+end
+
 function love.update()
     world:update(1/60)
 --[[
@@ -341,5 +346,11 @@ end
 function love.keypressed(key)
 	if key == "escape" then
         love.event.push("q")
-    end
+	end
+	if key == "m" then
+	carSwitch("blue");
+        end 
+	if key == "v" then
+	carSwitch("red");
+        end
 end
