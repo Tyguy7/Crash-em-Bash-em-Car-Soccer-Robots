@@ -22,7 +22,7 @@ function collide(a, b)
 		playGoal()
 		red_score = red_score + 1
 		resetBall()
-	end	
+	end
 	if objects["blue car"] and objects["red car"] then
 		crash3:play()
 	end
@@ -54,7 +54,7 @@ function playCrash()
 			crash1:stop()
 			crash2:play()
 		end
-end	
+end
 
 function love.load()
     love.graphics.setMode(800, 600)
@@ -129,7 +129,7 @@ function love.draw()
     love.graphics.clear()
 
     --draw the fans
-    fans = love.graphics.newImage("fans.png")  
+    fans = love.graphics.newImage("fans.png")
     love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
 
     --draw the cars
@@ -161,7 +161,6 @@ function love.draw()
 	--draw the score
 	love.graphics.setColor(255, 255, 255)
 
-<<<<<<< HEAD
 	love.graphics.print(tostring(red_score), 60, 300)
 	love.graphics.print(tostring(blue_score), 710, 300)
 end
@@ -177,10 +176,6 @@ local function difference(a1, a2)
 	end
 	return (a2 - a1)%math.pi
 end
-=======
-	love.graphics.print(tostring(red_score), 60, 350)
-	love.graphics.print(tostring(blue_score), 710, 350)
->>>>>>> 4289de4f18cbdd1e43b981a7b9518089928ae662
 
 local function shouldScreech(car_body)
 	velocity_x, velocity_y = car_body:getLinearVelocity()
