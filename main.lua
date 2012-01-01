@@ -29,6 +29,12 @@ function collide(a, b)
 	if objects["boundary"] then
 		playCrash()
 	end
+	if objects["blue car"] and objects["red car"] then
+		crash3:play()
+	end
+	if objects["boundary"] then
+		playCrash()
+	end
 end
 
 function playGoal()
@@ -42,6 +48,18 @@ function playGoal()
 	if rnum == 3 then
 		cheer3:play()
 	end
+end
+
+function playCrash()
+		rnum = math.random(3)
+		if rnum == 1 then
+			crash2:stop()
+			crash1:play()
+		end
+		if rnum == 2 then
+			crash1:stop()
+			crash2:play()
+		end
 end
 
 function playCrash()
@@ -161,9 +179,8 @@ function love.draw()
 	--draw the score
 	love.graphics.setColor(255, 255, 255)
 
-	love.graphics.print(tostring(red_score), 60, 300)
-	love.graphics.print(tostring(blue_score), 710, 300)
-end
+	love.graphics.print(tostring(red_score), 60, 350)
+	love.graphics.print(tostring(blue_score), 710, 350)
 
 local function normAngle(angle)
 	return angle % math.pi*2
