@@ -109,7 +109,7 @@ function love.load()
     ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
     ball_shape:setData("ball")
 
-    blue_car = love.graphics.newImage("blue.png")
+    blue_car = love.graphics.newImage("images/blue.png")
     blue_car_body = love.physics.newBody(world, 550, 350, 5, 3)
     blue_car_body:setAngle(math.rad(180))
     blue_car_body:setAngularDamping(3)
@@ -117,14 +117,14 @@ function love.load()
     blue_car_shape = love.physics.newRectangleShape(blue_car_body, 0, 0, 64, 32)
     blue_car_shape:setData("blue car")
 
-    red_car = love.graphics.newImage("red.png")
+    red_car = love.graphics.newImage("images/red.png")
     red_car_body = love.physics.newBody(world, 250, 350, 5, 3)
     red_car_body:setAngularDamping(3)
     red_car_body:setLinearDamping(1)
     red_car_shape = love.physics.newRectangleShape(red_car_body, 0, 0, 64, 32)
     red_car_shape:setData("red car")
 
-    music = love.audio.newSource("dope.mod")
+    music = love.audio.newSource("music/dope.mod")
     music:play()
 
     love.graphics.setFont(love.graphics.newFont(20))
@@ -145,16 +145,16 @@ function love.load()
     screech2:setVolume(0.2)
     screech2:setLooping(true)
 
-    tire_mark = love.graphics.newImage("tiremark.png")
+    tire_mark = love.graphics.newImage("images/tiremark.png")
     tire_marks_list = {}
 
-    fans = love.graphics.newImage("fans.png")
+    fans = love.graphics.newImage("images/fans.png")
 
-    flash = love.graphics.newImage("flash.png")
+    flash = love.graphics.newImage("images/flash.png")
     flashes = {}
 end
 
-carspark = love.graphics.newImage("spark.png")
+carspark = love.graphics.newImage("images/spark.png")
   rcar_particles = love.graphics.newParticleSystem( carspark, 20  )
   rcar_particles:setEmissionRate(20)
   rcar_particles:setLifetime(20)
