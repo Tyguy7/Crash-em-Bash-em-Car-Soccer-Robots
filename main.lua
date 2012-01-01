@@ -8,13 +8,18 @@ local function resetBall()
 	ball_body:setLinearVelocity(0, 0)
 end
 
-local function startCrashParticle(position, angle)
+local function vectorLength(x, y)
+	return math.sqrt(x*x + y*y)
+end
+
+local function startCrashParticle(position, impact)
 	local system = particle_systems[particle_systems.next]
 	particle_systems.next = ((particle_systems.next + 1)%10) + 1
 	if system then
 		system:setPosition(position[1], position[2])
-		system:setDirection(math.atan2(angle[2], angle[1]))
-		system:setEmissionRate((math.abs(angle[1]) + math.abs(angle[2]))*20)
+		system:setDirection(math.atan2(impact[2], impact[1]))
+		impact_force = vectorLength(impact[2], impact[1])
+		system:setEmissionRate(impact_force*80)
 		if not system:isActive() then
 			system:start()
 		end
@@ -158,7 +163,7 @@ function love.load()
 		system:setLifetime(.2)
 		system:setEmissionRate(120)
 		system:setParticleLife(1)
-		system:setSpread(2)
+		system:setSpread(2.5)
 		system:setSpeed(10,120)
 		system:setRadialAcceleration(10)
 		system:setTangentialAcceleration(0)
