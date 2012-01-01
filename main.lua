@@ -172,6 +172,15 @@ function love.load()
 	end
 end
 
+local function carSwitch(car)
+    if car.class.name == "Car" then
+    car = Monster(car.player, 2, world)
+    elseif car.class.name == "Monster" then
+    car = Car(car.player, 2, world)
+    end
+    return car
+end
+
 function love.draw()
 	love.graphics.clear()
 
@@ -324,5 +333,9 @@ end
 function love.keypressed(key)
 	if key == "escape" then
 		love.event.push("q")
+	elseif key == "m" then
+        blue_car = carSwitch(blue_car);
+	elseif key == "v" then
+        red_car = carSwitch(red_car);
 	end
 end
