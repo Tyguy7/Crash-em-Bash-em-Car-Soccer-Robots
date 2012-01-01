@@ -1,7 +1,7 @@
 require "math"
 
 local function resetBall()
-	ball_body:setPosition(400, 300)
+	ball_body:setPosition(400, 350)
 	ball_body:setLinearVelocity(0, 0)
 end
 
@@ -66,37 +66,37 @@ function love.load()
     world = love.physics.newWorld(0, 0, 800, 600)
 	world:setCallbacks(collide, nil, nil, nil)
 
-	bound_top_body = love.physics.newBody(world, 400, 0)
+	bound_top_body = love.physics.newBody(world, 400, 100)
 	bound_top_shape = love.physics.newRectangleShape(bound_top_body, 0, 0, 800, 3)
 	bound_top_shape:setData("boundary")
 	bound_bottom_body = love.physics.newBody(world, 400, 600)
 	bound_bottom_shape = love.physics.newRectangleShape(bound_bottom_body, 0, 0, 800, 3)
 	bound_bottom_shape:setData("boundary")
-	bound_left_body = love.physics.newBody(world, 0, 300)
+	bound_left_body = love.physics.newBody(world, 0, 350)
 	bound_left_shape = love.physics.newRectangleShape(bound_left_body, 0, 0, 3, 600)
 	bound_left_shape:setData("boundary")
-	bound_right_body = love.physics.newBody(world, 800, 300)
+	bound_right_body = love.physics.newBody(world, 800, 350)
 	bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
 	bound_right_shape:setData("boundary")
 
-	net_red_body = love.physics.newBody(world, 75, 300)
+	net_red_body = love.physics.newBody(world, 75, 350)
 	net_red_shape = love.physics.newRectangleShape(net_red_body, 0,0, 50, 100)
 	net_red_shape:setSensor(true)
 	net_red_shape:setData("red net")
 
-	net_blue_body = love.physics.newBody(world, 725, 300)
+	net_blue_body = love.physics.newBody(world, 725, 350)
 	net_blue_shape = love.physics.newRectangleShape(net_blue_body, 0,0, 50, 100)
 	net_blue_shape:setSensor(true)
 	net_blue_shape:setData("blue net")
 
-    ball_body = love.physics.newBody(world, 400, 300, 1, 1)
+    ball_body = love.physics.newBody(world, 400, 350, 1, 1)
 	ball_body:setAngularDamping(0.4)
 	ball_body:setLinearDamping(0.4)
     ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
 	ball_shape:setData("ball")
 
     blue_car = love.graphics.newImage("blue.png")
-    blue_car_body = love.physics.newBody(world, 550, 300, 5, 3)
+    blue_car_body = love.physics.newBody(world, 550, 350, 5, 3)
     blue_car_body:setAngle(math.rad(180))
 	blue_car_body:setAngularDamping(3)
 	blue_car_body:setLinearDamping(1)
@@ -104,7 +104,7 @@ function love.load()
     blue_car_shape:setData("blue car")
 
     red_car = love.graphics.newImage("red.png")
-    red_car_body = love.physics.newBody(world, 250, 300, 5, 3)
+    red_car_body = love.physics.newBody(world, 250, 350, 5, 3)
 	red_car_body:setAngularDamping(3)
 	red_car_body:setLinearDamping(1)
     red_car_shape = love.physics.newRectangleShape(red_car_body, 0, 0, 64, 32)
@@ -128,6 +128,10 @@ end
 function love.draw()
     love.graphics.clear()
 
+    --draw the fans
+    fans = love.graphics.newImage("fans.png")  
+    love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
+
     --draw the cars
     local world_x, world_y = blue_car_body:getWorldPoint(0,0)
     love.graphics.draw(blue_car, world_x, world_y,
@@ -144,21 +148,21 @@ function love.draw()
 
     --draw the nets
     love.graphics.setColor(200, 0, 0)
-    love.graphics.quad("fill", 50, 250,
-                               100, 250,
-                               100, 350,
-                               50, 350)
+    love.graphics.quad("fill", 50, 300,
+                               100, 300,
+                               100, 400,
+                               50, 400)
     love.graphics.setColor(0, 0, 200)
-    love.graphics.quad("fill", 700, 250,
-                               750, 250,
-                               750, 350,
-                               700, 350)
+    love.graphics.quad("fill", 700, 300,
+                               750, 300,
+                               750, 400,
+                               700, 400)
 
 	--draw the score
 	love.graphics.setColor(255, 255, 255)
 
-	love.graphics.print(tostring(red_score), 60, 300)
-	love.graphics.print(tostring(blue_score), 710, 300)
+	love.graphics.print(tostring(red_score), 60, 350)
+	love.graphics.print(tostring(blue_score), 710, 350)
 
 end
 
@@ -195,7 +199,7 @@ function love.update()
 
 	--ball "gravity" towards center of screen
 	local ball_x, ball_y = ball_body:getPosition()
-	local distance_x, distance_y = 400 - ball_x, 300 - ball_y
+	local distance_x, distance_y = 400 - ball_x, 350 - ball_y
 	ball_body:applyForce(distance_x/40, distance_y/40)
 end
 
