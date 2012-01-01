@@ -30,7 +30,8 @@ Car.static.STARTS = {[2]={
 
 function Car:initialize(player, no_of_players, world)
 	local start = self.class.STARTS[no_of_players][player]
-
+	self.player = player
+	self.playernum = no_of_players
 	self.body = love.physics.newBody(world, start.x, start.y, self.class.MASS,
 									 self.class.ROTATION_INERTIA)
 	self.body:setAngle(start.angle)

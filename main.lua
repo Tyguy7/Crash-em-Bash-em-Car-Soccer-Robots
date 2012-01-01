@@ -112,7 +112,7 @@ function love.load()
     ball_shape:setData("ball")
 
     red_car = Car(1, 2, world)
-    blue_car = Monster(2, 2, world)
+    blue_car = Car(2, 2, world)
 
     music = love.audio.newSource("music/dope.mod")
     music:play()
@@ -150,6 +150,15 @@ function love.load()
 		local system = love.graphics.newParticleSystem(spark, 20)
 		table.insert(particle_systems_pool, system)
 	end
+end
+
+local function carSwitch(car)
+    if car.class.name == "Car" then
+    car = Monster(car.player, 2, world)
+    elseif car.class.name == "Monster" then
+    car = Car(car.player, 2, world)
+    end
+    return car
 end
 
 function love.draw()
@@ -296,5 +305,13 @@ end
 function love.keypressed(key)
 	if key == "escape" then
         love.event.push("q")
-    end
+    	end	
+	if key == "m" then
+        blue_car = carSwitch(blue_car);
+    	end
+	if key == "v" then
+        red_car = carSwitch(red_car);
+    	end
+
+
 end
