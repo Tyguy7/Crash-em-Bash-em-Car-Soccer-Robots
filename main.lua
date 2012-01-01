@@ -1,7 +1,7 @@
 require "math"
 require "table"
 local Car = require "car"
-local Monster = require "car"
+local Monster = require "monster"
 
 local function resetBall()
     ball_body:setPosition(400, 350)
@@ -111,8 +111,8 @@ function love.load()
     ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
     ball_shape:setData("ball")
 
-    blue_car = Car(1, 2, world)
-    red_car = Car(2, 2, world)
+    red_car = Car(1, 2, world)
+    blue_car = Monster(2, 2, world)
 
     music = love.audio.newSource("music/dope.mod")
     music:play()
@@ -142,33 +142,15 @@ function love.load()
 
     flash = love.graphics.newImage("images/flash.png")
     flashes = {}
+
+	spark = love.graphics.newImage("images/spark.png")
+	particle_systems_pool = {}
+    particle_systems_in_use = {}
+	for i = 1, 10 do
+		local system = love.graphics.newParticleSystem(spark, 20)
+		table.insert(particle_systems_pool, system)
+	end
 end
-
---[[
-carspark = love.graphics.newImage("images/spark.png")
-  rcar_particles = love.graphics.newParticleSystem( carspark, 20  )
-  rcar_particles:setEmissionRate(20)
-  rcar_particles:setLifetime(20)
-  rcar_particles:setParticleLife(.50)
-  rcar_particles:setPosition(0, 0)
-  rcar_particles:setDirection(0)
-  rcar_particles:setSpeed(100)
-  rcar_particles:setSpread(100)
-  rcar_particles:setRadialAcceleration(-80)
-
-  bcar_particles = love.graphics.newParticleSystem( carspark, 20  )
-  bcar_particles:setEmissionRate(20)
-  bcar_particles:setLifetime(20)
-  bcar_particles:setParticleLife(.50)
-  bcar_particles:setPosition(0, 0)
-  bcar_particles:setDirection(0)
-  bcar_particles:setSpeed(100)
-  bcar_particles:setSpread(100)
-  rcar_particles:setRadialAcceleration(-80)
-
-rcar_sparks = 0
-bcar_sparks = 0
---]]
 
 function love.draw()
     love.graphics.clear()
@@ -200,31 +182,6 @@ function love.draw()
     --draw the cars
 	blue_car:draw()
 	red_car:draw()
-	--[[
-    local world_x, world_y = blue_car_body:getWorldPoint(0,0)
-    love.graphics.draw(blue_car, world_x, world_y,
-                       blue_car_body:getAngle(), 1, 1, 32, 32)
-               if rcar_sparks ~= 0 then
-            love.graphics.draw(bcar_particles, world_x, world_y)
-                rcar_sparks = rcar_sparks + 1
-               end
-    --check for sparks
-    if rcar_sparks > 20 then
-    rcar_sparks = 0
-    end
-
-    world_x, world_y = red_car_body:getWorldPoint(0,0)
-    love.graphics.draw(red_car, world_x, world_y,
-                       red_car_body:getAngle(), 1, 1, 32, 32)
-               if rcar_sparks ~= 0 then
-                love.graphics.draw(rcar_particles, world_x, world_y)
-                rcar_sparks = rcar_sparks + 1
-               end
-    --check for sparks
-    if bcar_sparks > 20 then
-    bcar_sparks = 0
-    end
-	--]]
 
     --draw the ball
     love.graphics.setColor(255, 255, 255)
@@ -280,16 +237,9 @@ local function tireMarks(car_body)
     end
 end
 
-local function carSwitch(car)
---	blue_car
-end
-
 function love.update()
     world:update(1/60)
---[[
-    rcar_particles:update(1/60)
-    bcar_particles:update(1/60)
---]]
+
 	blue_car:update()
 	red_car:update()
 
@@ -346,11 +296,5 @@ end
 function love.keypressed(key)
 	if key == "escape" then
         love.event.push("q")
-	end
-	if key == "m" then
-	carSwitch("blue");
-        end 
-	if key == "v" then
-	carSwitch("red");
-        end
+    end
 end

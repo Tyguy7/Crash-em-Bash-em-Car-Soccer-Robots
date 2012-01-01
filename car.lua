@@ -13,7 +13,7 @@ Car.static.LINEAR_DAMPING = 1
 Car.static.ANGULAR_DAMPING = 3
 
 Car.static.WIDTH = 64
-Car.static.HEIGHT = 32
+Car.static.HEIGHT = 26
 
 Car.static.INFO = {
 			        {image="red.png", data="red car",
