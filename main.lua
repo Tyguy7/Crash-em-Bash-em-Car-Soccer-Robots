@@ -1,4 +1,5 @@
 require "math"
+require "table"
 
 local function resetBall()
 	ball_body:setPosition(400, 350)
@@ -151,7 +152,7 @@ function love.load()
 	screech2:setLooping(true)
 
 	tire_mark = love.graphics.newImage("tiremark.png")
-	tire_mark_list = {}
+	tire_marks_list = {}
 end
 
 fanpic = "fans.png"
@@ -159,6 +160,21 @@ fanint = 0
 
 function love.draw()
     love.graphics.clear()
+
+
+	--draw the tiremarks
+	for i, location in ipairs(tire_marks_list) do
+		if location[3] > 60 then
+			alpha = 255
+		elseif location[3] <= 0 then
+			alpha = 0
+		else
+			alpha = location[3]*255/60
+		end
+		love.graphics.setColor(255, 255, 255, alpha)
+		love.graphics.draw(tire_mark, location[1], location[2], 0, 1, 1, -2, -2)
+	end
+	love.graphics.setColor(255,255,255)
 
     --draw the fans
     if fanpic ~= "fans.png" then
@@ -208,6 +224,11 @@ function love.draw()
 
 	love.graphics.print(tostring(red_score), 60, 350)
 	love.graphics.print(tostring(blue_score), 710, 350)
+
+	--test stuff
+	if tire_marks_list[1] then
+		love.graphics.print(tostring(tire_marks_list[1][3]), 400, 390)
+	end
 end
 
 local function normAngle(angle)
@@ -232,7 +253,12 @@ local function shouldScreech(car_body)
 end
 
 local function tireMarks(car_body)
-
+	local locations = {{28,-16},{28,16},{-22,16},{-22,-16}}
+	for i, location in ipairs(locations) do
+		local new = {car_body:getWorldPoint(location[1], location[2])}
+		new[3] = 200
+		table.insert(tire_marks_list, new)
+	end
 end
 
 function love.update()
@@ -291,6 +317,17 @@ function love.update()
 	elseif red_car_screeching then
 		screech1:stop()
 		red_car_screeching = false
+	end
+
+	local remove = {}
+	for i, location in ipairs(tire_marks_list) do
+		location[3] = location[3] - 1
+		if location[3] <= 0 then
+			table.insert(remove, i)
+		end
+	end
+	for i, remove_index in ipairs(remove) do
+		table.remove(tire_marks_list, remove_index)
 	end
 end
 
