@@ -33,10 +33,10 @@ function playGoal()
 	if rnum == 2 then
 		cheer2:play()
 	end
-	if rnum == 3 then 
+	if rnum == 3 then
 		cheer3:play()
 	end
-end	
+end
 
 function love.load()
     love.graphics.setMode(800, 600)
@@ -137,7 +137,27 @@ function love.draw()
 
 	love.graphics.print(tostring(red_score), 60, 300)
 	love.graphics.print(tostring(blue_score), 710, 300)
+end
 
+local function normAngle(angle)
+	return angle % math.pi*2
+end
+
+local function difference(a1, a2)
+	a1, a2 = normAngle(a1), normAngle(a2)
+	if a1 > a2 then
+		a1, a2 = a2, a1
+	end
+	return (a2 - a1)%math.pi
+end
+
+local function shouldScreech(car_body)
+	velocity_x, velocity_y = car_body:getLinearVelocity()
+	velocity_angle = math.atan2(velocity_y, velocity_x)
+	if math.abs(velocity_y) + math.abs(velocity_y) < 30 then
+		return nil
+	end
+	return difference(velocity_angle, car_body:getAngle()) > math.rad(40)
 end
 
 function love.update()
@@ -175,6 +195,26 @@ function love.update()
 	local ball_x, ball_y = ball_body:getPosition()
 	local distance_x, distance_y = 400 - ball_x, 300 - ball_y
 	ball_body:applyForce(distance_x/40, distance_y/40)
+
+	if shouldScreech(blue_car_body) then
+		if not blue_car_screeching then
+			--start the screeching
+		end
+		blue_car_screeching = true
+	elseif blue_car_screeching then
+		-- end the screeching
+		blue_car_screeching = false
+	end
+
+	if shouldScreech(red_car_body) then
+		if not red_car_screeching then
+			--start the screeching
+		end
+		red_car_screeching = true
+	elseif red_car_screeching then
+		-- end the screeching
+		red_car_screeching = false
+	end
 end
 
 function love.keypressed(key)
