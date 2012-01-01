@@ -370,9 +370,7 @@ function love.update()
 end
 
 function love.keypressed(key)
-    if key == "y" then
-        resetBall()
-    elseif key == "escape" then
+	if key == "escape" then
         love.event.push("q")
     end
 end
