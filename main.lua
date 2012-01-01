@@ -181,6 +181,7 @@ function love.draw()
 
 	love.graphics.print(tostring(red_score), 60, 350)
 	love.graphics.print(tostring(blue_score), 710, 350)
+end
 
 local function normAngle(angle)
 	return angle % math.pi*2
