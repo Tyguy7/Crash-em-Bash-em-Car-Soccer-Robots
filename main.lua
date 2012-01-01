@@ -14,14 +14,29 @@ function collide(a, b)
 		objects[b] = true
 	end
 	if objects["red net"] and objects["ball"] then
+		playGoal()
 		blue_score = blue_score + 1
 		resetBall()
 	end
 	if objects["blue net"] and objects["ball"] then
+		playGoal()
 		red_score = red_score + 1
 		resetBall()
 	end
 end
+
+function playGoal()
+	rnum = math.random(3)
+	if rnum == 1 then
+		cheer1:play()
+	end
+	if rnum == 2 then
+		cheer2:play()
+	end
+	if rnum == 3 then 
+		cheer3:play()
+	end
+end	
 
 function love.load()
     love.graphics.setMode(800, 600)
@@ -68,17 +83,24 @@ function love.load()
 	blue_car_body:setAngularDamping(3)
 	blue_car_body:setLinearDamping(1)
     blue_car_shape = love.physics.newRectangleShape(blue_car_body, 0, 0, 64, 32)
+    blue_car_shape:setData("blue car")
 
     red_car = love.graphics.newImage("red.png")
     red_car_body = love.physics.newBody(world, 250, 300, 5, 3)
 	red_car_body:setAngularDamping(3)
 	red_car_body:setLinearDamping(1)
     red_car_shape = love.physics.newRectangleShape(red_car_body, 0, 0, 64, 32)
+    red_car_shape:setData("red car")
 
 	music = love.audio.newSource("dope.mod")
 	music:play()
 
 	love.graphics.setFont(love.graphics.newFont(20))
+
+	cheer1 = love.audio.newSource("sounds/cheer-01.wav")
+	cheer2 = love.audio.newSource("sounds/cheer-03.wav")
+	cheer3 = love.audio.newSource("sounds/kids-cheer-01.wav")
+
 end
 
 function love.draw()
