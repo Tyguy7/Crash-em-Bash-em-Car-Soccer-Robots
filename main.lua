@@ -224,11 +224,6 @@ function love.draw()
 
 	love.graphics.print(tostring(red_score), 60, 350)
 	love.graphics.print(tostring(blue_score), 710, 350)
-
-	--test stuff
-	if tire_marks_list[1] then
-		love.graphics.print(tostring(tire_marks_list[1][3]), 400, 390)
-	end
 end
 
 local function normAngle(angle)
