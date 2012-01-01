@@ -1,5 +1,6 @@
 require "math"
 require "table"
+local Car = require "car"
 
 local function resetBall()
     ball_body:setPosition(400, 350)
@@ -7,7 +8,7 @@ local function resetBall()
 end
 
 function collide(a, b)
-    objects = {}
+    local objects = {}
     if a then
         objects[a] = true
     end
@@ -109,20 +110,8 @@ function love.load()
     ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
     ball_shape:setData("ball")
 
-    blue_car = love.graphics.newImage("images/blue.png")
-    blue_car_body = love.physics.newBody(world, 550, 350, 5, 3)
-    blue_car_body:setAngle(math.rad(180))
-    blue_car_body:setAngularDamping(3)
-    blue_car_body:setLinearDamping(1)
-    blue_car_shape = love.physics.newRectangleShape(blue_car_body, 0, 0, 64, 32)
-    blue_car_shape:setData("blue car")
-
-    red_car = love.graphics.newImage("images/red.png")
-    red_car_body = love.physics.newBody(world, 250, 350, 5, 3)
-    red_car_body:setAngularDamping(3)
-    red_car_body:setLinearDamping(1)
-    red_car_shape = love.physics.newRectangleShape(red_car_body, 0, 0, 64, 32)
-    red_car_shape:setData("red car")
+    blue_car = Car(1, 2, world)
+    red_car = Car(2, 2, world)
 
     music = love.audio.newSource("music/dope.mod")
     music:play()
@@ -154,6 +143,7 @@ function love.load()
     flashes = {}
 end
 
+--[[
 carspark = love.graphics.newImage("images/spark.png")
   rcar_particles = love.graphics.newParticleSystem( carspark, 20  )
   rcar_particles:setEmissionRate(20)
@@ -177,6 +167,7 @@ carspark = love.graphics.newImage("images/spark.png")
 
 rcar_sparks = 0
 bcar_sparks = 0
+--]]
 
 function love.draw()
     love.graphics.clear()
@@ -206,6 +197,9 @@ function love.draw()
     end
 
     --draw the cars
+	blue_car:draw()
+	red_car:draw()
+	--[[
     local world_x, world_y = blue_car_body:getWorldPoint(0,0)
     love.graphics.draw(blue_car, world_x, world_y,
                        blue_car_body:getAngle(), 1, 1, 32, 32)
@@ -229,6 +223,7 @@ function love.draw()
     if bcar_sparks > 20 then
     bcar_sparks = 0
     end
+	--]]
 
     --draw the ball
     love.graphics.setColor(255, 255, 255)
@@ -286,60 +281,34 @@ end
 
 function love.update()
     world:update(1/60)
-
+--[[
     rcar_particles:update(1/60)
     bcar_particles:update(1/60)
-
-
-    --blue car movement
-    if love.keyboard.isDown("left") then
-        blue_car_body:applyTorque(-40)
-    end
-    if love.keyboard.isDown("right") then
-        blue_car_body:applyTorque(40)
-    end
-    if love.keyboard.isDown("up") then
-        blue_car_body:applyForce(blue_car_body:getWorldVector(160,0))
-    end
-    if love.keyboard.isDown("down") then
-        blue_car_body:applyForce(blue_car_body:getWorldVector(-60,0))
-    end
-
-    --red car movement
-    if love.keyboard.isDown("a") then
-        red_car_body:applyTorque(-40)
-    end
-    if love.keyboard.isDown("d") then
-        red_car_body:applyTorque(40)
-    end
-    if love.keyboard.isDown("w") then
-        red_car_body:applyForce(red_car_body:getWorldVector(160,0))
-    end
-    if love.keyboard.isDown("s") then
-        red_car_body:applyForce(red_car_body:getWorldVector(-60,0))
-    end
+--]]
+	blue_car:update()
+	red_car:update()
 
     --ball "gravity" towards center of screen
     local ball_x, ball_y = ball_body:getPosition()
     local distance_x, distance_y = 400 - ball_x, 350 - ball_y
     ball_body:applyForce(distance_x/40, distance_y/40)
 
-    if shouldScreech(blue_car_body) then
+    if shouldScreech(blue_car.body) then
         if not blue_car_screeching then
             screech1:play()
         end
-        tireMarks(blue_car_body)
+        tireMarks(blue_car.body)
         blue_car_screeching = true
     elseif blue_car_screeching then
         screech1:stop()
         blue_car_screeching = false
     end
 
-    if shouldScreech(red_car_body) then
+    if shouldScreech(red_car.body) then
         if not red_car_screeching then
             screech1:play()
         end
-        tireMarks(red_car_body)
+        tireMarks(red_car.body)
         red_car_screeching = true
     elseif red_car_screeching then
         screech1:stop()
