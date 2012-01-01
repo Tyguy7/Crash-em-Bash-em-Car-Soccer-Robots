@@ -52,7 +52,10 @@ function playGoal()
 	if rnum == 3 then
 		cheer3:play()
 	end
-	fanpic = "cheer1.png"
+	for i = 1, 50 do
+		local location = {math.random(0, 800), math.random(0, 100), math.random(50)}
+		table.insert(flashes, location)
+	end
 end
 
 function playCrash()
@@ -156,10 +159,12 @@ function love.load()
 
 	tire_mark = love.graphics.newImage("tiremark.png")
 	tire_marks_list = {}
-end
 
-fanpic = "fans.png"
-fanint = 0
+	fans = love.graphics.newImage("fans.png")
+
+	flash = love.graphics.newImage("flash.png")
+	flashes = {}
+end
 
 carspark = love.graphics.newImage("spark.png")
   rcar_particles = love.graphics.newParticleSystem( carspark, 20  )
@@ -187,7 +192,7 @@ bcar_sparks = 0
 
 function love.draw()
     love.graphics.clear()
-	
+
 	--draw the tiremarks
 	for i, location in ipairs(tire_marks_list) do
 		if location[3] > 60 then
@@ -198,26 +203,19 @@ function love.draw()
 			alpha = location[3]*255/60
 		end
 		love.graphics.setColor(255, 255, 255, alpha)
-		love.graphics.draw(tire_mark, location[1], location[2], 0, 1, 1, -2, -2)
+		love.graphics.draw(tire_mark, location[1], location[2], 0, 1, 1, 2, 2)
 	end
 	love.graphics.setColor(255,255,255)
 
     --draw the fans
-    if fanpic ~= "fans.png" then
-	fanint = fanint + 1
-	if fanint > 30 and fanint <= 60 then
-	     fanpic = "cheer2.png"
-	end
-	if fanint > 60 and fanint <= 90 then
-	     fanpic = "cheer3.png"
-	end
-	if fanint > 90 then
-	     fanpic = "fans.png"
-	     fanint = 0
-	end
-    end
-    fans = love.graphics.newImage(fanpic)
     love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
+
+	--draw any camera flashes
+	for i, location in ipairs(flashes) do
+		if location[3] < 2 then
+			love.graphics.draw(flash, location[1], location[2], 0, 1, 1, 64, 64)
+		end
+	end
 
     --draw the cars
     local world_x, world_y = blue_car_body:getWorldPoint(0,0)
@@ -369,6 +367,17 @@ function love.update()
 	end
 	for i, remove_index in ipairs(remove) do
 		table.remove(tire_marks_list, remove_index)
+	end
+
+	remove = {}
+	for i, location in ipairs(flashes) do
+		location[3] = location[3] - .8
+		if location[3] <= 0 then
+			table.insert(remove, i)
+		end
+	end
+	for i, remove_index in ipairs(remove) do
+		table.remove(flashes, remove_index)
 	end
 end
 
