@@ -23,5 +23,7 @@ customization of car attributes
 better nets
 	polygon shape or mutliple rectangles
 
+ball "springy"
+
 debug mode
 
