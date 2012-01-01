@@ -30,12 +30,15 @@ function collide(a, b)
 	if objects["boundary"] then
 		playCrash()
 	end
-	if objects["blue car"] and objects["red car"] then
-		crash3:play()
+	if objects["blue car"] then
+	--	bcar_particles:start()
+		bcar_sparks = 1
 	end
-	if objects["boundary"] then
-		playCrash()
+	if objects["red car"] then
+	--	rcar_particles:start()
+		rcar_sparks = 1
 	end
+
 end
 
 function playGoal()
@@ -158,10 +161,33 @@ end
 fanpic = "fans.png"
 fanint = 0
 
+carspark = love.graphics.newImage("spark.png")
+  rcar_particles = love.graphics.newParticleSystem( carspark, 20  )
+  rcar_particles:setEmissionRate(20)
+  rcar_particles:setLifetime(20)
+  rcar_particles:setParticleLife(.50)
+  rcar_particles:setPosition(0, 0)
+  rcar_particles:setDirection(0)
+  rcar_particles:setSpeed(100)
+  rcar_particles:setSpread(100)
+  rcar_particles:setRadialAcceleration(-80)
+
+  bcar_particles = love.graphics.newParticleSystem( carspark, 20  )
+  bcar_particles:setEmissionRate(20)
+  bcar_particles:setLifetime(20)
+  bcar_particles:setParticleLife(.50)
+  bcar_particles:setPosition(0, 0)
+  bcar_particles:setDirection(0)
+  bcar_particles:setSpeed(100)
+  bcar_particles:setSpread(100)
+  rcar_particles:setRadialAcceleration(-80)
+
+rcar_sparks = 0
+bcar_sparks = 0
+
 function love.draw()
     love.graphics.clear()
-
-
+	
 	--draw the tiremarks
 	for i, location in ipairs(tire_marks_list) do
 		if location[3] > 60 then
@@ -197,10 +223,26 @@ function love.draw()
     local world_x, world_y = blue_car_body:getWorldPoint(0,0)
     love.graphics.draw(blue_car, world_x, world_y,
                        blue_car_body:getAngle(), 1, 1, 32, 32)
+		       if rcar_sparks ~= 0 then
+			love.graphics.draw(bcar_particles, world_x, world_y)
+    			rcar_sparks = rcar_sparks + 1
+		       end
+    --check for sparks
+    if rcar_sparks > 20 then
+	rcar_sparks = 0
+    end
 
     world_x, world_y = red_car_body:getWorldPoint(0,0)
     love.graphics.draw(red_car, world_x, world_y,
                        red_car_body:getAngle(), 1, 1, 32, 32)
+		       if rcar_sparks ~= 0 then
+		        love.graphics.draw(rcar_particles, world_x, world_y)
+    			rcar_sparks = rcar_sparks + 1
+		       end
+    --check for sparks
+    if bcar_sparks > 20 then
+	bcar_sparks = 0
+    end
 
     --draw the ball
     love.graphics.setColor(255, 255, 255)
@@ -258,6 +300,10 @@ end
 
 function love.update()
     world:update(1/60)
+
+    rcar_particles:update(1/60)
+    bcar_particles:update(1/60)
+
 
 	--blue car movement
 	if love.keyboard.isDown("left") then
