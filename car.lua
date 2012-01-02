@@ -1,7 +1,8 @@
 require "middleclass"
 require "math"
+local GameObject = require "gameobject"
 
-local Car = class("Car")
+local Car = class("Car", GameObject)
 
 Car.static.TURN_TORQUE = 40
 Car.static.FORWARD = 160
@@ -60,19 +61,6 @@ function Car:update()
     if love.keyboard.isDown(self.keys.down) then
         self.body:applyForce(self.body:getWorldVector(self.class.REVERSE,0))
     end
-end
-
-function Car:draw()
-	local oldColor = {love.graphics.getColor()}
-	love.graphics.setColor(unpack(self.color))
-
-	local offset = self.class.WIDTH/2
-	local world_x, world_y = self.body:getWorldPoint(0,0)
-
-	love.graphics.draw(self.image, world_x, world_y, self.body:getAngle(), 1, 1,
-					   offset, offset)
-
-	love.graphics.setColor(unpack(oldColor))
 end
 
 return Car
