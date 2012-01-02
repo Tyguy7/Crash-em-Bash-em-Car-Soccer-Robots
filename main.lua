@@ -2,6 +2,7 @@ require "math"
 require "table"
 local Car = require "car"
 local Monster = require "monster"
+local Net = require "net"
 
 local function resetBall()
 	ball_body:setPosition(400, 350)
@@ -24,6 +25,39 @@ local function startCrashParticle(position, impact)
 			system:start()
 		end
 	end
+end
+function collide(a, b)
+    local objects = {}
+    if a then
+        objects[a] = true
+    end
+    if b then
+        objects[b] = true
+    end
+    if objects["red net"] and objects["ball"] then
+        playGoal()
+        blue_score = blue_score + 1
+        setTimeout(resetBall())
+    end
+    if objects["blue net"] and objects["ball"] then
+        playGoal()
+        red_score = red_score + 1
+        resetBall()
+    end
+    if objects["blue car"] and objects["red car"] then
+        crash3:play()
+    end
+    if objects["boundary"] then
+        playCrash()
+    end
+    if objects["blue car"] then
+    --    bcar_particles:start()
+        bcar_sparks = 1
+    end
+    if objects["red car"] then
+    --    rcar_particles:start()
+        rcar_sparks = 1
+    end
 end
 
 function collide(a, b, collision)
@@ -108,27 +142,37 @@ function love.load()
 	bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
 	bound_right_shape:setData("boundary")
 
-	net_red_body = love.physics.newBody(world, 75, 350)
-	net_red_shape = love.physics.newRectangleShape(net_red_body, 0,0, 50, 100)
-	net_red_shape:setSensor(true)
-	net_red_shape:setData("red net")
-
-	net_blue_body = love.physics.newBody(world, 725, 350)
-	net_blue_shape = love.physics.newRectangleShape(net_blue_body, 0,0, 50, 100)
-	net_blue_shape:setSensor(true)
-	net_blue_shape:setData("blue net")
 
 	ball_body = love.physics.newBody(world, 400, 350, 1, 1)
 	ball_body:setAngularDamping(0.4)
 	ball_body:setLinearDamping(0.4)
 	ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
 	ball_shape:setData("ball")
+    bound_top_body = love.physics.newBody(world, 400, 100)
+    bound_top_shape = love.physics.newRectangleShape(bound_top_body, 0, 0, 800, 3)
+    bound_top_shape:setData("boundary")
+    bound_bottom_body = love.physics.newBody(world, 400, 600)
+    bound_bottom_shape = love.physics.newRectangleShape(bound_bottom_body, 0, 0, 800, 3)
+    bound_bottom_shape:setData("boundary")
+    bound_left_body = love.physics.newBody(world, 0, 350)
+    bound_left_shape = love.physics.newRectangleShape(bound_left_body, 0, 0, 3, 600)
+    bound_left_shape:setData("boundary")
+    bound_right_body = love.physics.newBody(world, 800, 350)
+    bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
+    bound_right_shape:setData("boundary")
+    ball_body = love.physics.newBody(world, 400, 350, 1, 1)
+    ball_body:setAngularDamping(0.4)
+    ball_body:setLinearDamping(0.4)
+    ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
+    ball_shape:setData("ball")
 
 	red_car = Car(1, 2, world)
 	blue_car = Monster(2, 2, world)
 
 	music = love.audio.newSource("music/dope.mod")
 	music:play()
+    red_net = Net(1, 2, world)
+    blue_net = Net(2, 2, world)
 
 	love.graphics.setFont(love.graphics.newFont(20))
 
@@ -221,28 +265,20 @@ function love.draw()
 		love.graphics.draw(system)
 	end
 
-	--draw the ball
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.circle("fill", ball_body:getX(), ball_body:getY(),
-						 ball_shape:getRadius(), 20)
+    --draw the ball
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.circle("fill", ball_body:getX(), ball_body:getY(),
+    ball_shape:getRadius(), 20)
 
-	--draw the nets
-	love.graphics.setColor(200, 0, 0)
-	love.graphics.quad("fill", 50, 300,
-							   100, 300,
-							   100, 400,
-							   50, 400)
-	love.graphics.setColor(0, 0, 200)
-	love.graphics.quad("fill", 700, 300,
-							   750, 300,
-							   750, 400,
-							   700, 400)
+    --draw the nets
+    red_net:draw()
+    blue_net:draw()
 
-	--draw the score
-	love.graphics.setColor(255, 255, 255)
+    --draw the score
+    love.graphics.setColor(255, 255, 255)
 
-	love.graphics.print(tostring(red_score), 60, 350)
-	love.graphics.print(tostring(blue_score), 710, 350)
+    love.graphics.print(tostring(red_score), 60, 350)
+    love.graphics.print(tostring(blue_score), 710, 350)
 end
 
 local function normAngle(angle)
