@@ -21,6 +21,7 @@ function Fans:initialize(world)
 
 	self.color = self.class.COLOR
 
+	self.flash = love.graphics.newImage("res/images/"..self.class.FLASH)
 	self.flashes = {}
 end
 
@@ -57,7 +58,7 @@ function Fans:draw()
 	Fans.super.draw(self)
 	for i, location in ipairs(self.flashes) do
 		if location[3] < 2 then
-			love.graphics.draw(flash, location[1], location[2], 0, 1, 1, 64, 64)
+			love.graphics.draw(self.flash, location[1], location[2], 0, 1, 1, 64, 64)
 		end
 	end
 end

@@ -128,17 +128,6 @@ function love.load()
 	crash2 = love.audio.newSource("res/sounds/crash-02.wav", "static")
 	crash3 = love.audio.newSource("res/sounds/crash-03.wav", "static")
 
-	screech1 = love.audio.newSource("res/sounds/screech.wav", "static")
-	screech1:setVolume(0.2)
-	screech1:setLooping(true)
-
-	screech2 = love.audio.newSource("res/sounds/screech.wav", "static")
-	screech2:setVolume(0.2)
-	screech2:setLooping(true)
-
-	flash = love.graphics.newImage("res/images/flash.png")
-	flashes = {}
-
 	spark = love.graphics.newImage("res/images/spark.png")
 	particle_systems = {next=1}
 	for i = 1, 10 do
