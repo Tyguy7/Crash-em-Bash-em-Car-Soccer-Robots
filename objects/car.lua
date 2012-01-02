@@ -1,6 +1,7 @@
 require "math"
 
 require "libs.middleclass"
+require "libs.art"
 
 local GameObject = require "objects.gameobject"
 
@@ -19,7 +20,7 @@ Car.static.HEIGHT = 26
 
 Car.static.IMAGE = "car.png"
 Car.static.TIRE_MARK_IMAGE = "tiremark.png"
-Car.static.SCREECH = "screech.wav"
+Car.static.SCREECH = "screech.ogg"
 
 Car.static.INFO = {
 			        {color={255,0,0}, data="red car",
@@ -49,10 +50,10 @@ function Car:initialize(player, no_of_players, world)
 	local info = self.class.INFO[player]
 	self.color = info.color
 	self.shape:setData(info.data)
-	self.image = love.graphics.newImage("res/images/"..self.class.IMAGE)
-	self.tire_mark_image = love.graphics.newImage("res/images/"..self.class.TIRE_MARK_IMAGE)
+	self.image = art(self.class.IMAGE)
+	self.tire_mark_image = art(self.class.TIRE_MARK_IMAGE)
 	self.keys = info.keys
-	self.screech = love.audio.newSource("res/sounds/"..self.class.SCREECH, "static")
+	self.screech = art(self.class.SCREECH)
 	self.screech:setLooping(true)
 	self.screech:setVolume(0.3)
 

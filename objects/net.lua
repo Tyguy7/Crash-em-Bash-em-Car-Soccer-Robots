@@ -35,7 +35,7 @@ function Net:initialize(player, world)
 	self.inside:setSensor(true)
 	self.inside:setData(info.tag)
 
-	self.image = love.graphics.newImage("res/images/"..self.class.IMAGE)
+	self.image = art(self.class.IMAGE)
 
 	self.color = info.color
 end

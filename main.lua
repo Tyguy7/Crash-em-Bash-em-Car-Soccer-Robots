@@ -1,6 +1,8 @@
 require "math"
 require "table"
 
+require "libs.art"
+
 local Car = require "objects.car"
 local Monster = require "objects.monster"
 local Net = require "objects.net"
@@ -91,9 +93,6 @@ function love.load()
 	world = love.physics.newWorld(0, 0, 800, 600)
 	world:setCallbacks(collide, nil, nil, nil)
 
-	bound_top_body = love.physics.newBody(world, 400, 100)
-	bound_top_shape = love.physics.newRectangleShape(bound_top_body, 0, 0, 800, 3)
-	bound_top_shape:setData("boundary")
 	bound_bottom_body = love.physics.newBody(world, 400, 600)
 	bound_bottom_shape = love.physics.newRectangleShape(bound_bottom_body, 0, 0, 800, 3)
 	bound_bottom_shape:setData("boundary")
@@ -111,24 +110,24 @@ function love.load()
 	red_car = objects[3]
 	ball = objects[4]
 
-	music = love.audio.newSource("res/music/dope.mod")
+	music = art("dope.mod")
 	music:setLooping(true)
 	music:play()
 
-	announcer = love.audio.newSource("res/sounds/title.wav")
+	announcer = art("title.ogg")
 	announcer:play()
 
 	love.graphics.setFont(love.graphics.newFont(20))
 
-	cheer1 = love.audio.newSource("res/sounds/cheer-01.wav", "static")
-	cheer2 = love.audio.newSource("res/sounds/cheer-03.wav", "static")
-	cheer3 = love.audio.newSource("res/sounds/kids-cheer-01.wav", "static")
+	cheer1 = art("cheer-01.ogg")
+	cheer2 = art("cheer-03.ogg")
+	cheer3 = art("kids-cheer-01.ogg")
 
-	crash1 = love.audio.newSource("res/sounds/crash-01.wav", "static")
-	crash2 = love.audio.newSource("res/sounds/crash-02.wav", "static")
-	crash3 = love.audio.newSource("res/sounds/crash-03.wav", "static")
+	crash1 = art("crash-01.ogg")
+	crash2 = art("crash-02.ogg")
+	crash3 = art("crash-03.ogg")
 
-	spark = love.graphics.newImage("res/images/spark.png")
+	spark = art("spark.png")
 	particle_systems = {next=1}
 	for i = 1, 10 do
 		local system = love.graphics.newParticleSystem(spark, 20)
@@ -150,15 +149,6 @@ function love.load()
 	end
 end
 
-local function carSwitch(car)
-    if car.class.name == "Car" then
-    car = Monster(car.player, 2, world)
-    elseif car.class.name == "Monster" then
-    car = Car(car.player, 2, world)
-    end
-    return car
-end
-
 function love.draw()
 	love.graphics.clear()
 
@@ -166,7 +156,6 @@ function love.draw()
 	for i, object in ipairs(objects) do
 		object:draw()
 	end
-
 
 	-- draw particles
 	for i, system in ipairs(particle_systems) do
@@ -195,9 +184,5 @@ end
 function love.keypressed(key)
 	if key == "escape" then
 		love.event.push("q")
-	elseif key == "m" then
-        blue_car = carSwitch(blue_car);
-	elseif key == "v" then
-        red_car = carSwitch(red_car);
 	end
 end

@@ -2,6 +2,7 @@ require "math"
 
 require "libs.middleclass"
 
+require "libs.art"
 local GameObject = require "objects.gameobject"
 
 local Fans = class("Fans", GameObject)
@@ -16,12 +17,13 @@ function Fans:initialize(world)
 
 	self.body = love.physics.newBody(world, self.class.X_LOC, self.class.Y_LOC, 0)
 	self.shape = love.physics.newRectangleShape(self.body, 0, 0, 800, 100)
+	self.shape:setData("boundary")
 
-	self.image = love.graphics.newImage("res/images/"..self.class.IMAGE)
+	self.image = art(self.class.IMAGE)
 
 	self.color = self.class.COLOR
 
-	self.flash = love.graphics.newImage("res/images/"..self.class.FLASH)
+	self.flash = art(self.class.FLASH)
 	self.flashes = {}
 end
 
