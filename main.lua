@@ -120,7 +120,7 @@ function playCrash()
 end
 
 function love.load()
-	love.graphics.setMode(800, 600, true, true, 4)
+	love.graphics.setMode(800, 600)
 	love.graphics.setBackgroundColor(34, 189, 40)
 
 	red_score = 0
