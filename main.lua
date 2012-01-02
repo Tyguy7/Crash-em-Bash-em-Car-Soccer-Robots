@@ -120,7 +120,7 @@ function playCrash()
 end
 
 function love.load()
-	love.graphics.setMode(800, 600)
+	love.graphics.setMode(800, 600, true, true, 4)
 	love.graphics.setBackgroundColor(34, 189, 40)
 
 	red_score = 0
@@ -142,24 +142,6 @@ function love.load()
 	bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
 	bound_right_shape:setData("boundary")
 
-
-	ball_body = love.physics.newBody(world, 400, 350, 1, 1)
-	ball_body:setAngularDamping(0.4)
-	ball_body:setLinearDamping(0.4)
-	ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
-	ball_shape:setData("ball")
-    bound_top_body = love.physics.newBody(world, 400, 100)
-    bound_top_shape = love.physics.newRectangleShape(bound_top_body, 0, 0, 800, 3)
-    bound_top_shape:setData("boundary")
-    bound_bottom_body = love.physics.newBody(world, 400, 600)
-    bound_bottom_shape = love.physics.newRectangleShape(bound_bottom_body, 0, 0, 800, 3)
-    bound_bottom_shape:setData("boundary")
-    bound_left_body = love.physics.newBody(world, 0, 350)
-    bound_left_shape = love.physics.newRectangleShape(bound_left_body, 0, 0, 3, 600)
-    bound_left_shape:setData("boundary")
-    bound_right_body = love.physics.newBody(world, 800, 350)
-    bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
-    bound_right_shape:setData("boundary")
     ball_body = love.physics.newBody(world, 400, 350, 1, 1)
     ball_body:setAngularDamping(0.4)
     ball_body:setLinearDamping(0.4)
@@ -170,9 +152,14 @@ function love.load()
 	blue_car = Monster(2, 2, world)
 
 	music = love.audio.newSource("music/dope.mod")
+	music:setLooping(true)
 	music:play()
-    red_net = Net(1, 2, world)
-    blue_net = Net(2, 2, world)
+
+    red_net = Net(1, world)
+    blue_net = Net(2, world)
+
+	announcer = love.audio.newSource("sounds/title.wav")
+	announcer:play()
 
 	love.graphics.setFont(love.graphics.newFont(20))
 
@@ -217,6 +204,7 @@ function love.load()
 		system:setSpin(0)
 		system:setSpinVariation(0)
 		system:setColor(255,255,255,240,255,255,255,10)
+		system:stop()
 		table.insert(particle_systems, system)
 	end
 end
@@ -324,7 +312,7 @@ function love.update()
 	--ball "gravity" towards center of screen
 	local ball_x, ball_y = ball_body:getPosition()
 	local distance_x, distance_y = 400 - ball_x, 350 - ball_y
-	ball_body:applyForce(distance_x/40, distance_y/40)
+	ball_body:applyForce(distance_x/160, distance_y/160)
 
 	if shouldScreech(blue_car.body) then
 		if not blue_car_screeching then
