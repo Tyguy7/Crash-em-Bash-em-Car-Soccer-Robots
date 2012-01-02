@@ -5,6 +5,7 @@ local Car = require "objects.car"
 local Monster = require "objects.monster"
 local Net = require "objects.net"
 local Ball = require "objects.ball"
+local Fans = require "objects.fans"
 
 local function vectorLength(x, y)
 	return math.sqrt(x*x + y*y)
@@ -23,31 +24,6 @@ local function startCrashParticle(position, impact)
 		end
 	end
 end
-function collide(a, b)
-    local objects = {}
-    if a then
-        objects[a] = true
-    end
-    if b then
-        objects[b] = true
-    end
-    if objects["red net"] and objects["ball"] then
-        playGoal()
-        blue_score = blue_score + 1
-        ball:reset()
-    end
-    if objects["blue net"] and objects["ball"] then
-        playGoal()
-        red_score = red_score + 1
-        ball:reset()
-    end
-    if objects["blue car"] and objects["red car"] then
-        crash3:play()
-    end
-    if objects["boundary"] then
-        playCrash()
-    end
-end
 
 function collide(a, b, collision)
 	local objects = {}
@@ -60,12 +36,12 @@ function collide(a, b, collision)
 	if objects["red net"] and objects["ball"] then
 		playGoal()
 		blue_score = blue_score + 1
-		resetBall()
+		ball:reset()
 	end
 	if objects["blue net"] and objects["ball"] then
 		playGoal()
 		red_score = red_score + 1
-		resetBall()
+		ball:reset()
 	end
 	if objects["blue car"] and objects["red car"] then
 		crash3:play()
@@ -90,10 +66,7 @@ function playGoal()
 	if rnum == 3 then
 		cheer3:play()
 	end
-	for i = 1, 50 do
-		local location = {math.random(0, 800), math.random(0, 100), math.random(50)}
-		table.insert(flashes, location)
-	end
+	fans:startGoalFlashes()
 end
 
 function playCrash()
@@ -131,17 +104,16 @@ function love.load()
 	bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
 	bound_right_shape:setData("boundary")
 
-    ball = Ball(world)
-
-	red_car = Car(1, 2, world)
-	blue_car = Monster(2, 2, world)
+	objects = {Fans(world), Car(1, 2, world), Monster(2, 2, world), Ball(world),
+			   Net(1, world), Net(2, world)}
+	fans = objects[1]
+	blue_car = objects[2]
+	red_car = objects[3]
+	ball = objects[4]
 
 	music = love.audio.newSource("res/music/dope.mod")
 	music:setLooping(true)
 	music:play()
-
-    red_net = Net(1, world)
-    blue_net = Net(2, world)
 
 	announcer = love.audio.newSource("res/sounds/title.wav")
 	announcer:play()
@@ -163,11 +135,6 @@ function love.load()
 	screech2 = love.audio.newSource("res/sounds/screech.wav", "static")
 	screech2:setVolume(0.2)
 	screech2:setLooping(true)
-
-	tire_mark = love.graphics.newImage("res/images/tiremark.png")
-	tire_marks_list = {}
-
-	fans = love.graphics.newImage("res/images/fans.png")
 
 	flash = love.graphics.newImage("res/images/flash.png")
 	flashes = {}
@@ -206,44 +173,16 @@ end
 function love.draw()
 	love.graphics.clear()
 
-	--draw the tiremarks
-	for i, location in ipairs(tire_marks_list) do
-		if location[3] > 60 then
-			alpha = 255
-		elseif location[3] <= 0 then
-			alpha = 0
-		else
-			alpha = location[3]*255/60
-		end
-		love.graphics.setColor(255, 255, 255, alpha)
-		love.graphics.draw(tire_mark, location[1], location[2], 0, 1, 1, 2, 2)
-	end
-	love.graphics.setColor(255,255,255)
-
-	--draw the fans
-	love.graphics.draw(fans, 0, 0, 0, 1, 1, 0, 0)
-
-	--draw any camera flashes
-	for i, location in ipairs(flashes) do
-		if location[3] < 2 then
-			love.graphics.draw(flash, location[1], location[2], 0, 1, 1, 64, 64)
-		end
+	--draw the game objects
+	for i, object in ipairs(objects) do
+		object:draw()
 	end
 
-	--draw the cars
-	blue_car:draw()
-	red_car:draw()
 
+	-- draw particles
 	for i, system in ipairs(particle_systems) do
 		love.graphics.draw(system)
 	end
-
-    --draw the ball
-    ball:draw()
-
-    --draw the nets
-    red_net:draw()
-    blue_net:draw()
 
     --draw the score
     love.graphics.setColor(255, 255, 255)
@@ -252,90 +191,15 @@ function love.draw()
     love.graphics.print(tostring(blue_score), 710, 350)
 end
 
-local function normAngle(angle)
-	return angle % math.pi*2
-end
-
-local function difference(a1, a2)
-	a1, a2 = normAngle(a1), normAngle(a2)
-	if a1 > a2 then
-		a1, a2 = a2, a1
-	end
-	return (a2 - a1)%math.pi
-end
-
-local function shouldScreech(car_body)
-	velocity_x, velocity_y = car_body:getLinearVelocity()
-	velocity_angle = math.atan2(velocity_y, velocity_x)
-	if math.abs(velocity_y) + math.abs(velocity_y) < 60 then
-		return nil
-	end
-	return difference(velocity_angle, car_body:getAngle()) > math.rad(40)
-end
-
-local function tireMarks(car_body)
-	local locations = {{28,-16},{28,16},{-22,16},{-22,-16}}
-	for i, location in ipairs(locations) do
-		local new = {car_body:getWorldPoint(location[1], location[2])}
-		new[3] = 200
-		table.insert(tire_marks_list, new)
-	end
-end
-
 function love.update()
 	world:update(1/60)
-
-	blue_car:update()
-	red_car:update()
 
 	for i, system in ipairs(particle_systems) do
 		system:update(1/60)
 	end
 
-	ball:update()
-
-	if shouldScreech(blue_car.body) then
-		if not blue_car_screeching then
-			screech1:play()
-		end
-		tireMarks(blue_car.body)
-		blue_car_screeching = true
-	elseif blue_car_screeching then
-		screech1:stop()
-		blue_car_screeching = false
-	end
-
-	if shouldScreech(red_car.body) then
-		if not red_car_screeching then
-			screech1:play()
-		end
-		tireMarks(red_car.body)
-		red_car_screeching = true
-	elseif red_car_screeching then
-		screech1:stop()
-		red_car_screeching = false
-	end
-
-	local remove = {}
-	for i, location in ipairs(tire_marks_list) do
-		location[3] = location[3] - 1
-		if location[3] <= 0 then
-			table.insert(remove, i)
-		end
-	end
-	for i, remove_index in ipairs(remove) do
-		table.remove(tire_marks_list, remove_index)
-	end
-
-	remove = {}
-	for i, location in ipairs(flashes) do
-		location[3] = location[3] - .8
-		if location[3] <= 0 then
-			table.insert(remove, i)
-		end
-	end
-	for i, remove_index in ipairs(remove) do
-		table.remove(flashes, remove_index)
+	for i, object in ipairs(objects) do
+		object:update()
 	end
 end
 

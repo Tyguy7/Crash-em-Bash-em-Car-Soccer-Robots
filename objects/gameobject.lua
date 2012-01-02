@@ -1,6 +1,9 @@
 require "libs.middleclass"
 
 GameObject = class("GameObject")
+
+function GameObject:update() end
+
 function GameObject:draw()
 	local oldColor = {love.graphics.getColor()}
 	love.graphics.setColor(unpack(self.color))
