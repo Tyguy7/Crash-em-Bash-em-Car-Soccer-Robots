@@ -1,4 +1,6 @@
-local Car = require "car"
+require "libs.middleclass"
+
+local Car = require "objects.car"
 
 local Monster = class("Monster", Car)
 Monster.static.IMAGE = "truck.png"

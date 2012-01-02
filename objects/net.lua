@@ -1,6 +1,8 @@
-require "middleclass"
 require "math"
-local GameObject = require "gameobject"
+
+require "libs.middleclass"
+
+local GameObject = require "objects.gameobject"
 
 local Net = class("Net", GameObject)
 Net.static.IMAGE = "net.png"

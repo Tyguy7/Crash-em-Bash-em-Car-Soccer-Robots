@@ -1,4 +1,4 @@
-require "middleclass"
+require "libs.middleclass"
 
 GameObject = class("GameObject")
 function GameObject:draw()

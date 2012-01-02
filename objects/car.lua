@@ -1,9 +1,10 @@
-require "middleclass"
 require "math"
-local GameObject = require "gameobject"
+
+require "libs.middleclass"
+
+local GameObject = require "objects.gameobject"
 
 local Car = class("Car", GameObject)
-
 Car.static.TURN_TORQUE = 40
 Car.static.FORWARD = 160
 Car.static.REVERSE = -60

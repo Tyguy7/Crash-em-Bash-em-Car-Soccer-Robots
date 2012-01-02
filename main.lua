@@ -1,13 +1,10 @@
 require "math"
 require "table"
-local Car = require "car"
-local Monster = require "monster"
-local Net = require "net"
 
-local function resetBall()
-	ball_body:setPosition(400, 350)
-	ball_body:setLinearVelocity(0, 0)
-end
+local Car = require "objects.car"
+local Monster = require "objects.monster"
+local Net = require "objects.net"
+local Ball = require "objects.ball"
 
 local function vectorLength(x, y)
 	return math.sqrt(x*x + y*y)
@@ -37,26 +34,18 @@ function collide(a, b)
     if objects["red net"] and objects["ball"] then
         playGoal()
         blue_score = blue_score + 1
-        setTimeout(resetBall())
+        ball:reset()
     end
     if objects["blue net"] and objects["ball"] then
         playGoal()
         red_score = red_score + 1
-        resetBall()
+        ball:reset()
     end
     if objects["blue car"] and objects["red car"] then
         crash3:play()
     end
     if objects["boundary"] then
         playCrash()
-    end
-    if objects["blue car"] then
-    --    bcar_particles:start()
-        bcar_sparks = 1
-    end
-    if objects["red car"] then
-    --    rcar_particles:start()
-        rcar_sparks = 1
     end
 end
 
@@ -142,52 +131,48 @@ function love.load()
 	bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
 	bound_right_shape:setData("boundary")
 
-    ball_body = love.physics.newBody(world, 400, 350, 1, 1)
-    ball_body:setAngularDamping(0.4)
-    ball_body:setLinearDamping(0.4)
-    ball_shape = love.physics.newCircleShape(ball_body, 0, 0, 10)
-    ball_shape:setData("ball")
+    ball = Ball(world)
 
 	red_car = Car(1, 2, world)
 	blue_car = Monster(2, 2, world)
 
-	music = love.audio.newSource("music/dope.mod")
+	music = love.audio.newSource("res/music/dope.mod")
 	music:setLooping(true)
 	music:play()
 
     red_net = Net(1, world)
     blue_net = Net(2, world)
 
-	announcer = love.audio.newSource("sounds/title.wav")
+	announcer = love.audio.newSource("res/sounds/title.wav")
 	announcer:play()
 
 	love.graphics.setFont(love.graphics.newFont(20))
 
-	cheer1 = love.audio.newSource("sounds/cheer-01.wav", "static")
-	cheer2 = love.audio.newSource("sounds/cheer-03.wav", "static")
-	cheer3 = love.audio.newSource("sounds/kids-cheer-01.wav", "static")
+	cheer1 = love.audio.newSource("res/sounds/cheer-01.wav", "static")
+	cheer2 = love.audio.newSource("res/sounds/cheer-03.wav", "static")
+	cheer3 = love.audio.newSource("res/sounds/kids-cheer-01.wav", "static")
 
-	crash1 = love.audio.newSource("sounds/crash-01.wav", "static")
-	crash2 = love.audio.newSource("sounds/crash-02.wav", "static")
-	crash3 = love.audio.newSource("sounds/crash-03.wav", "static")
+	crash1 = love.audio.newSource("res/sounds/crash-01.wav", "static")
+	crash2 = love.audio.newSource("res/sounds/crash-02.wav", "static")
+	crash3 = love.audio.newSource("res/sounds/crash-03.wav", "static")
 
-	screech1 = love.audio.newSource("sounds/screech.wav", "static")
+	screech1 = love.audio.newSource("res/sounds/screech.wav", "static")
 	screech1:setVolume(0.2)
 	screech1:setLooping(true)
 
-	screech2 = love.audio.newSource("sounds/screech.wav", "static")
+	screech2 = love.audio.newSource("res/sounds/screech.wav", "static")
 	screech2:setVolume(0.2)
 	screech2:setLooping(true)
 
-	tire_mark = love.graphics.newImage("images/tiremark.png")
+	tire_mark = love.graphics.newImage("res/images/tiremark.png")
 	tire_marks_list = {}
 
-	fans = love.graphics.newImage("images/fans.png")
+	fans = love.graphics.newImage("res/images/fans.png")
 
-	flash = love.graphics.newImage("images/flash.png")
+	flash = love.graphics.newImage("res/images/flash.png")
 	flashes = {}
 
-	spark = love.graphics.newImage("images/spark.png")
+	spark = love.graphics.newImage("res/images/spark.png")
 	particle_systems = {next=1}
 	for i = 1, 10 do
 		local system = love.graphics.newParticleSystem(spark, 20)
@@ -254,9 +239,7 @@ function love.draw()
 	end
 
     --draw the ball
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", ball_body:getX(), ball_body:getY(),
-    ball_shape:getRadius(), 20)
+    ball:draw()
 
     --draw the nets
     red_net:draw()
@@ -309,10 +292,7 @@ function love.update()
 		system:update(1/60)
 	end
 
-	--ball "gravity" towards center of screen
-	local ball_x, ball_y = ball_body:getPosition()
-	local distance_x, distance_y = 400 - ball_x, 350 - ball_y
-	ball_body:applyForce(distance_x/160, distance_y/160)
+	ball:update()
 
 	if shouldScreech(blue_car.body) then
 		if not blue_car_screeching then
