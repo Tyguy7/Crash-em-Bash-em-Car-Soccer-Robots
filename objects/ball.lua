@@ -15,7 +15,7 @@ Ball.static.LINEAR_DAMPING = 0.4
 Ball.static.TAG = "ball"
 
 function Ball:initialize(world)
-	self.image = love.graphics.newImage("images/"..self.class.IMAGE)
+	self.image = love.graphics.newImage("res/images/"..self.class.IMAGE)
 	self.color = {unpack(self.class.COLOR)}
 	self.body = love.physics.newBody(world, 400, 350, self.class.MASS,
 									 self.class.ROTATION_INERTIA)

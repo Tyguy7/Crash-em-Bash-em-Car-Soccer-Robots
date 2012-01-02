@@ -45,7 +45,7 @@ function Car:initialize(player, no_of_players, world)
 	local info = self.class.INFO[player]
 	self.color = info.color
 	self.shape:setData(info.data)
-	self.image = love.graphics.newImage("images/"..self.class.IMAGE)
+	self.image = love.graphics.newImage("res/images/"..self.class.IMAGE)
 	self.keys = info.keys
 end
 
