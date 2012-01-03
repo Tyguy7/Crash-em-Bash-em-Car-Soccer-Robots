@@ -1,13 +1,14 @@
 require "math"
 
 require "libs.middleclass"
-
 require "libs.art"
+
 local GameObject = require "objects.gameobject"
 
 local Fans = class("Fans", GameObject)
 Fans.static.IMAGE = "fans.png"
 Fans.static.FLASH = "flash.png"
+Fans.static.CHEERS = {"cheer-01.ogg", "cheer-03.ogg", "kids-cheer-01.ogg"}
 Fans.static.X_LOC = 400
 Fans.static.Y_LOC = 50
 Fans.static.COLOR = {255, 255, 255}
@@ -25,6 +26,11 @@ function Fans:initialize(world)
 
 	self.flash = art(self.class.FLASH)
 	self.flashes = {}
+
+	self.cheers = {}
+	for i, cheer_filename in ipairs(self.class.CHEERS) do
+		table.insert(self.cheers, art(cheer_filename))
+	end
 end
 
 function Fans:scheduleFlashes(number)
@@ -35,11 +41,17 @@ function Fans:scheduleFlashes(number)
 	end
 end
 
-function Fans:startGoalFlashes()
-	self:scheduleFlashes(50)
+function Fans:cheer()
+	local choice = math.random(#self.cheers)
+	self.cheers[choice]:play()
 end
 
-function Fans:startGameOverFlashes()
+function Fans:goalScored()
+	self:scheduleFlashes(50)
+	self:cheer()
+end
+
+function Fans:gameOver()
 	self:scheduleFlashes(1000)
 end
 
