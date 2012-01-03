@@ -1,5 +1,6 @@
 require "math"
 require "table"
+require "os"
 
 require "libs.middleclass"
 require "libs.art"
@@ -120,13 +121,19 @@ function Battle:load()
         table.insert(objects, 2, car)
     end
 
+	for i=1,math.ceil((os.clock()%1)*1000) do
+		math.random()
+	end
 
     self.objects = objects
 
     self.soundtrack = Soundtrack{"dope.mod", "iphar_aldeas_funk.mod"}
     self.soundtrack:play()
 
-    art("game start.ogg"):play()
+	local start_puns = {"start1.ogg", "start2.ogg", "start3.ogg", "start4.ogg",
+						 "start5.ogg", "start6.ogg", "start7.ogg", "start8.ogg",
+						 "start9.ogg", "start10.ogg", "start11.ogg"}
+    art(start_puns[math.random(#start_puns)]):play()
 
     love.graphics.setFont(love.graphics.newFont(20))
 
