@@ -25,5 +25,11 @@ better nets
 
 ball "springy"
 
+4 player mode
+
+joystick support
+
+setup menu
+
 debug mode
 

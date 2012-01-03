@@ -20,8 +20,9 @@ function state:load()
 
 	self.selection = 1
 	self.choices = {{"2-Player", startGame, {2}},
-					{"4-Player", startGame, {self, 4}},
-					{"Setup", goToSetup, nil}}
+					--{"4-Player", startGame, {self, 4}},
+					--{"Setup", goToSetup, nil}
+					}
 
 	self.fadeInLength = 90
 	self.counter = 0

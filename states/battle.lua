@@ -51,8 +51,9 @@ local function makeCollide(state)
             state.ball:reset()
         end
         if objects["blue car"] and objects["red car"] then
-            if state.crash3:isStopped() then
+            if state.crash3:isStopped() and state.hornCrashCounter < 0 then
                 state.crash3:play()
+                state.hornCrashCounter = 500
             end
             state:startCrashParticle({collision:getPosition()},
                                      {collision:getVelocity()})
@@ -117,6 +118,7 @@ function Battle:load()
     self.crash1 = art("crash-01.ogg")
     self.crash2 = art("crash-02.ogg")
     self.crash3 = art("crash-03.ogg")
+    self.hornCrashCounter = -1
 
     self.spark = art("spark.png")
     self.particle_systems = {next=1}
@@ -162,6 +164,8 @@ end
 
 function Battle:update()
     self.world:update(1/60)
+
+    self.hornCrashCounter = self.hornCrashCounter - 1
 
     for i, system in ipairs(self.particle_systems) do
         system:update(1/60)
