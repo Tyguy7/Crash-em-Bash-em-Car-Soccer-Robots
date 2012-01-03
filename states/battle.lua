@@ -87,6 +87,8 @@ function Battle:load()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setBackgroundColor(34, 189, 40)
 
+    love.audio.setVolume(0.7)
+
     self.red_score = 0
     self.blue_score = 0
 
