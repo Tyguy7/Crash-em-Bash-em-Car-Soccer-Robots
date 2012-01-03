@@ -13,6 +13,10 @@ local function startGame(num_players)
 	state.num_players = num_players
 end
 
+local function goToSetup(data)
+
+end
+
 function state:load()
 	love.graphics.setBackgroundColor(0, 0, 0)
 	self.title = art("title.png")
@@ -22,7 +26,7 @@ function state:load()
 	self.selection = 1
 	self.choices = {{"2-Player", startGame, 2},
 					{"4-Player", startGame, 4},
-					--{"Setup", goToSetup, nil}
+					{"Setup", goToSetup, nil}
 					}
 
 	self.fadeInLength = 90
@@ -73,7 +77,7 @@ function state:update()
 	end
 
 	if self.fadingOut then
-		self.fadeoutOpacity = self.fadeoutOpacity + 10
+		self.fadeoutOpacity = self.fadeoutOpacity + 8
 		self.fadeoutOpacity = math.min(255, self.fadeoutOpacity)
 		if self.fadeoutOpacity >= 255 then
 			local battle_state = Battle(self.num_players)
