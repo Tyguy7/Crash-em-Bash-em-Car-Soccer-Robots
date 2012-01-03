@@ -184,6 +184,8 @@ end
 function Battle:update()
     self.world:update(1/60)
 
+	self.soundtrack:update()
+
     self.hornCrashCounter = self.hornCrashCounter - 1
 
     for i, system in ipairs(self.particle_systems) do
