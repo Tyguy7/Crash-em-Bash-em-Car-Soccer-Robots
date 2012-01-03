@@ -33,6 +33,10 @@ function Battle:startCrashParticle(position, impact)
     end
 end
 
+function Battle:addTireMark(x, y, lifetime, image)
+	table.insert(self.tire_marks, {x, y, lifetime, image})
+end
+
 local function makeCollide(state)
     local function collide(a, b, collision)
         local objects = {}
@@ -110,10 +114,10 @@ function Battle:load()
 
     local cars = nil
     if self.num_players == 2 then
-        cars = {Monster(1, 2, world), Monster(2, 2, world),}
+        cars = {Monster(1, 2, self), Monster(2, 2, self),}
     elseif self.num_players == 4 then
-        cars = {Monster(1, 4, world), Monster(2, 4, world),
-                Monster(3, 4, world), Monster(4, 4, world)}
+        cars = {Monster(1, 4, self), Monster(2, 4, self),
+                Monster(3, 4, self), Monster(4, 4, self)}
     end
     local objects = {Fans(world), Ball(world), Net(1, world), Net(2, world)}
     self.fans = objects[1]
@@ -123,6 +127,8 @@ function Battle:load()
     end
 
     self.objects = objects
+
+	self.tire_marks = {}
 
     self.soundtrack = Soundtrack{"dope.mod", "iphar_aldeas_funk.mod"}
     self.soundtrack:play()
@@ -164,6 +170,20 @@ end
 function Battle:draw()
     love.graphics.clear()
 
+	--draw tire marks
+		for i, location in ipairs(self.tire_marks) do
+		if location[3] > 60 then
+			alpha = 255
+		elseif location[3] <= 0 then
+			alpha = 0
+		else
+			alpha = location[3]*255/60
+		end
+		love.graphics.setColor(255, 255, 255, alpha)
+		love.graphics.draw(location[4], location[1], location[2], 0, 1, 1, 2, 2)
+	end
+	love.graphics.setColor(255,255,255)
+
     --draw the game objects
     for i, object in ipairs(self.objects) do
         object:draw()
@@ -191,6 +211,17 @@ function Battle:update()
     for i, system in ipairs(self.particle_systems) do
         system:update(1/60)
     end
+
+	local remove = {}
+	for i, mark in ipairs(self.tire_marks) do
+		mark[3] = mark[3] - 1
+		if mark[3] <= 0 then
+			table.insert(remove, i)
+		end
+	end
+	for i, remove_index in ipairs(remove) do
+		table.remove(self.tire_marks, remove_index)
+	end
 
     for i, object in ipairs(self.objects) do
         object:update()

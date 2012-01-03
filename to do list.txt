@@ -20,9 +20,6 @@ damage to car
 customization of car attributes
 	max number of "points" to spend on different attributes
 
-better nets
-	polygon shape or mutliple rectangles
-
 ball "springy"
 
 joystick support

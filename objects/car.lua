@@ -44,11 +44,13 @@ Car.static.TIRE_MARKS = {{28,-16},{28,16},{-22,16},{-22,-16}}
 Car.static.TIRE_MARK_LIFETIME = 200
 
 
-function Car:initialize(player, no_of_players, world)
+function Car:initialize(player, no_of_players, state)
+	self.gameState = state
+
 	local start = self.class.STARTS[no_of_players][player]
 	self.player = player
 	self.playernum = no_of_players
-	self.body = love.physics.newBody(world, start.x, start.y, self.class.MASS,
+	self.body = love.physics.newBody(state.world, start.x, start.y, self.class.MASS,
 									 self.class.ROTATION_INERTIA)
 	self.body:setAngle(start.angle)
 	self.body:setAngularDamping(self.class.ANGULAR_DAMPING)
@@ -65,8 +67,6 @@ function Car:initialize(player, no_of_players, world)
 	self.screech = art(self.class.SCREECH)
 	self.screech:setLooping(true)
 	self.screech:setVolume(0.3)
-
-	self.tire_marks = {}
 end
 
 local function normAngle(angle)
@@ -92,9 +92,9 @@ end
 
 function Car:addTireMarks()
 	for i, location in ipairs(self.class.TIRE_MARKS) do
-		local new_mark = {self.body:getWorldPoint(location[1], location[2])}
-		new_mark[3] = self.class.TIRE_MARK_LIFETIME
-		table.insert(self.tire_marks, new_mark)
+		local x, y = self.body:getWorldPoint(location[1], location[2])
+		self.gameState:addTireMark(x, y, self.class.TIRE_MARK_LIFETIME,
+							   self.tire_mark_image)
 	end
 end
 
@@ -122,34 +122,6 @@ function Car:update()
 		self.screech:stop()
 		self.screeching = false
 	end
-
-	local remove = {}
-	for i, mark in ipairs(self.tire_marks) do
-		mark[3] = mark[3] - 1
-		if mark[3] <= 0 then
-			table.insert(remove, i)
-		end
-	end
-	for i, remove_index in ipairs(remove) do
-		table.remove(self.tire_marks, remove_index)
-	end
-end
-
-function Car:draw()
-	for i, location in ipairs(self.tire_marks) do
-		if location[3] > 60 then
-			alpha = 255
-		elseif location[3] <= 0 then
-			alpha = 0
-		else
-			alpha = location[3]*255/60
-		end
-		love.graphics.setColor(255, 255, 255, alpha)
-		love.graphics.draw(self.tire_mark_image, location[1], location[2], 0, 1, 1, 2, 2)
-	end
-	love.graphics.setColor(255,255,255)
-
-	Car.super.draw(self)
 end
 
 return Car
