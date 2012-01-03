@@ -20,7 +20,7 @@ function state:load()
 
 	self.selection = 1
 	self.choices = {{"2-Player", startGame, {2}},
-					--{"4-Player", startGame, {self, 4}},
+					{"4-Player", startGame, {self, 4}},
 					{"Setup", goToSetup, nil}}
 
 	self.fadeInLength = 90
@@ -59,11 +59,11 @@ function state:update()
 	self.music:update()
 	self.counter = self.counter + 1
 
-	if self.counter > 260 and self.counter < 280 then
+	if self.counter > 220 and self.counter < 240 then
 		self.title_y = self.title_y - 8
 	end
 
-	if self.counter > 290 and self.counter < 310 then
+	if self.counter > 320 and self.counter < 350 then
 		self.selection_opacity = self.selection_opacity + 16
 		self.selection_opacity = math.min(255, self.selection_opacity)
 	end
