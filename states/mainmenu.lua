@@ -9,6 +9,7 @@ local function startGame(num_players)
 	state.fadingOut = true
 	state.fadeoutOpacity = 0
 	state.music:fadeOut(30)
+	assert(num_players)
 	state.num_players = num_players
 end
 
@@ -19,8 +20,8 @@ function state:load()
 							"aceman_-_my_first_console.xm"}
 
 	self.selection = 1
-	self.choices = {{"2-Player", startGame, {2}},
-					--{"4-Player", startGame, {self, 4}},
+	self.choices = {{"2-Player", startGame, 2},
+					{"4-Player", startGame, 4},
 					--{"Setup", goToSetup, nil}
 					}
 
@@ -52,7 +53,9 @@ function state:keypressed(key)
 	end
 
 	if key == "return" or key == " " then
-		self.choices[self.selection][2]()
+		local event = self.choices[self.selection][2]
+		local data = self.choices[self.selection][3]
+		event(data)
 	end
 end
 
@@ -73,7 +76,7 @@ function state:update()
 		self.fadeoutOpacity = self.fadeoutOpacity + 10
 		self.fadeoutOpacity = math.min(255, self.fadeoutOpacity)
 		if self.fadeoutOpacity >= 255 then
-			local battle_state = Battle()
+			local battle_state = Battle(self.num_players)
 			battle_state:load()
 			return battle_state
 		end

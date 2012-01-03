@@ -23,13 +23,22 @@ Car.static.TIRE_MARK_IMAGE = "tiremark.png"
 Car.static.SCREECH = "screech.ogg"
 
 Car.static.INFO = {
-			        {color={255,0,0}, data="red car",
+			        {color={255,0,0}, data="car",
 			          keys={left="a", right="d", up="w", down="s"}},
-			        {color={0,0,255}, data="blue car",
-			          keys={left="left", right="right", up="up", down="down"}}}
+			        {color={0,0,255}, data="car",
+			          keys={left="left", right="right", up="up", down="down"}},
+					{color={234,97,216}, data="car",
+			          keys={left="g", right="j", up="y", down="h"}},
+			        {color={97,226,234}, data="car",
+			          keys={left="l", right="'", up="p", down=";"}}}
 Car.static.STARTS = {[2]={
 					    {x=250, y=350, angle=0},
 					    {x=550, y=350, angle=math.rad(180)}},
+					 [4]={
+					    {x=250, y=250, angle=math.rad(35)},
+					    {x=550, y=250, angle=math.rad(145)},
+						{x=250, y=450, angle=math.rad(-35)},
+					    {x=550, y=450, angle=math.rad(-145)}},
 				    }
 Car.static.TIRE_MARKS = {{28,-16},{28,16},{-22,16},{-22,-16}}
 Car.static.TIRE_MARK_LIFETIME = 200

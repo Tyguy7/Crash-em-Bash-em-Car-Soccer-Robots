@@ -50,7 +50,7 @@ local function makeCollide(state)
             state.red_score = state.red_score + 1
             state.ball:reset()
         end
-        if objects["blue car"] and objects["red car"] then
+        if a == "car" and b == "car" then
             if state.crash3:isStopped() and state.hornCrashCounter < 0 then
                 state.crash3:play()
                 state.hornCrashCounter = 500
@@ -58,7 +58,7 @@ local function makeCollide(state)
             state:startCrashParticle({collision:getPosition()},
                                      {collision:getVelocity()})
         end
-        if objects["boundary"] and (objects["blue car"] or objects["red car"]) then
+        if objects["boundary"] and objects["car"] then
             state:playCrash()
             state:startCrashParticle({collision:getPosition()},
                                      {collision:getVelocity()})
@@ -77,6 +77,10 @@ function Battle:playCrash()
         self.crash1:stop()
         self.crash2:play()
     end
+end
+
+function Battle:initialize(num_players)
+    self.num_players = num_players
 end
 
 function Battle:load()
@@ -100,12 +104,21 @@ function Battle:load()
     bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
     bound_right_shape:setData("boundary")
 
-    local objects = {Fans(world), Monster(1, 2, world), Monster(2, 2, world), Ball(world),
-                     Net(1, world), Net(2, world)}
+    local cars = nil
+    if self.num_players == 2 then
+        cars = {Monster(1, 2, world), Monster(2, 2, world),}
+    elseif self.num_players == 4 then
+        cars = {Monster(1, 4, world), Monster(2, 4, world),
+                Monster(3, 4, world), Monster(4, 4, world)}
+    end
+    local objects = {Fans(world), Ball(world), Net(1, world), Net(2, world)}
     self.fans = objects[1]
-    self.blue_car = objects[2]
-    self.red_car = objects[3]
-    self.ball = objects[4]
+    self.ball = objects[2]
+    for i, car in ipairs(cars) do
+        table.insert(objects, 2, car)
+    end
+
+
     self.objects = objects
 
     self.soundtrack = Soundtrack{"dope.mod", "iphar_aldeas_funk.mod"}
