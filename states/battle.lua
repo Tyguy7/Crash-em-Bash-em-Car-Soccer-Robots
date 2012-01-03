@@ -87,7 +87,7 @@ function Battle:load()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setBackgroundColor(34, 189, 40)
 
-    love.audio.setVolume(0.7)
+    love.audio.setVolume(0.6)
 
     self.red_score = 0
     self.blue_score = 0
@@ -126,7 +126,7 @@ function Battle:load()
     self.soundtrack = Soundtrack{"dope.mod", "iphar_aldeas_funk.mod"}
     self.soundtrack:play()
 
-    --art("game start.ogg"):play()
+    art("game start.ogg"):play()
 
     love.graphics.setFont(love.graphics.newFont(20))
 
