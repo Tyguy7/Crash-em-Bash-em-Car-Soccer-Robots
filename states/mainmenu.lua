@@ -1,3 +1,5 @@
+require "math"
+
 require "libs.art"
 local Soundtrack = require "libs.soundtrack"
 
