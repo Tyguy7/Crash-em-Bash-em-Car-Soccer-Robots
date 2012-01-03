@@ -1,5 +1,5 @@
 local image_ext = {png=true, bmp=true}
-local audio_ext = {ogg=true, mod=true, xm=true}
+local audio_ext = {ogg=true, mod=true, [".xm"]=true}
 
 function art(filename)
 	local extension = filename:sub(-3,-1)
