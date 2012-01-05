@@ -24,7 +24,7 @@ function Soundtrack:stop()
 	self.stopped = true
 end
 
-function Soundtrack:update()
+function Soundtrack:update(dt)
 	if self.sources[self.source]:isStopped() and not self.stopped then
 		self.source = self.source + 1
 		if self.source > self.num_sources then
@@ -33,7 +33,7 @@ function Soundtrack:update()
 		self:play()
 	end
 	if self.fading then
-		self.fadeCounter = self.fadeCounter - 1
+		self.fadeCounter = self.fadeCounter - dt*60
 		self.sources[self.source]:setVolume(self.fadeCounter/self.fadeLength)
 		if self.fadeCounter <= 0 then
 			self:stop()

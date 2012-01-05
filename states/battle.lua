@@ -201,15 +201,15 @@ function Battle:draw()
     love.graphics.print(tostring(self.blue_score), 710, 350)
 end
 
-function Battle:update()
-    self.world:update(1/60)
+function Battle:update(dt)
+    self.world:update(dt)
 
 	self.soundtrack:update()
 
     self.hornCrashCounter = self.hornCrashCounter - 1
 
     for i, system in ipairs(self.particle_systems) do
-        system:update(1/60)
+        system:update(dt)
     end
 
 	local remove = {}

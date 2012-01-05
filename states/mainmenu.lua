@@ -31,7 +31,7 @@ function state:load()
 					{"Setup", goToSetup, nil}
 					}
 
-	self.fadeInLength = 90
+	self.fadeInLength = 3.5
 	self.counter = 0
 
 	self.title_y = 44
@@ -65,21 +65,18 @@ function state:keypressed(key)
 	end
 end
 
-function state:update()
-	self.music:update()
-	self.counter = self.counter + 1
+function state:update(dt)
+	self.music:update(dt)
+	self.counter = self.counter + dt
 
-	if self.counter > 220 and self.counter < 240 then
-		self.title_y = self.title_y - 8
-	end
+	local y_pos_counter = math.min(math.max(3.8, self.counter), 4.0)
+	self.title_y = y_pos_counter*-800 + 3084
 
-	if self.counter > 320 and self.counter < 350 then
-		self.selection_opacity = self.selection_opacity + 16
-		self.selection_opacity = math.min(255, self.selection_opacity)
-	end
+	local sel_opacity_counter =  math.min(math.max(5.33, self.counter-.5), 5.83)
+	self.selection_opacity = sel_opacity_counter*510 - 2718.3
 
 	if self.fadingOut then
-		self.fadeoutOpacity = self.fadeoutOpacity + 8
+		self.fadeoutOpacity = self.fadeoutOpacity + 8 * dt * 60
 		self.fadeoutOpacity = math.min(255, self.fadeoutOpacity)
 		if self.fadeoutOpacity >= 255 then
 			local battle_state = Battle(self.num_players)
