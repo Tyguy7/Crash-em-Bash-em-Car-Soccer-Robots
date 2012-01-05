@@ -204,7 +204,7 @@ end
 function Battle:update(dt)
     self.world:update(dt)
 
-	self.soundtrack:update()
+	self.soundtrack:update(dt)
 
     self.hornCrashCounter = self.hornCrashCounter - 1
 
