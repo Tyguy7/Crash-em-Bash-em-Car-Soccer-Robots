@@ -12,6 +12,7 @@ local Monster = require "objects.monster"
 local Net = require "objects.net"
 local Ball = require "objects.ball"
 local Fans = require "objects.fans"
+local Field = require "objects.field"
 
 local Battle = class("Battle")
 
@@ -92,7 +93,6 @@ end
 function Battle:load()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setBackgroundColor(34, 189, 40)
-
     love.audio.setVolume(0.6)
 
     self.red_score = 0
@@ -101,6 +101,7 @@ function Battle:load()
     local world = love.physics.newWorld(0, 0, 800, 600)
     world:setCallbacks(makeCollide(self), nil, nil, nil)
     self.world = world
+    self.Field = Field(world)
 
     bound_bottom_body = love.physics.newBody(world, 400, 600)
     bound_bottom_shape = love.physics.newRectangleShape(bound_bottom_body, 0, 0, 800, 3)
@@ -169,7 +170,7 @@ end
 
 function Battle:draw()
     love.graphics.clear()
-
+    self.Field:draw()
 	--draw tire marks
 		for i, location in ipairs(self.tire_marks) do
 		if location[3] > 60 then
