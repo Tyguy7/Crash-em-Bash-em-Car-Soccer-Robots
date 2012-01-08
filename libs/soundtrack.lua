@@ -16,6 +16,9 @@ end
 function Soundtrack:play()
 	self.sources[self.source]:setVolume(1)
 	self.sources[self.source]:play()
+	if logging then
+		logging:write("Playing source "..tostring(self.source)..".\n")
+	end
 	self.stopped = false
 end
 
