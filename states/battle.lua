@@ -9,6 +9,7 @@ local Soundtrack = require "libs.soundtrack"
 
 local Car = require "objects.car"
 local Monster = require "objects.monster"
+local Semi = require "objects.semi"
 local Net = require "objects.net"
 local Ball = require "objects.ball"
 local Fans = require "objects.fans"
@@ -115,10 +116,10 @@ function Battle:load()
 
     local cars = nil
     if self.num_players == 2 then
-        self.cars = {Car(1, 2, self), Car(2, 2, self),}
+        self.cars = {Semi(1, 2, self), Semi(2, 2, self),}
     elseif self.num_players == 4 then
-        self.cars = {Car(1, 4, self), Car(2, 4, self),
-                Car(3, 4, self), Car(4, 4, self)}
+        self.cars = {Semi(1, 4, self), Semi(2, 4, self),
+                Semi(3, 4, self), Semi(4, 4, self)}
     end
     local objects = {Fans(world), Ball(world), Net(1, world), Net(2, world)}
     self.fans = objects[1]
