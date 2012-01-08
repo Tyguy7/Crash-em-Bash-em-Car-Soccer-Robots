@@ -114,15 +114,15 @@ function Battle:load()
 
     local cars = nil
     if self.num_players == 2 then
-        cars = {Monster(1, 2, self), Monster(2, 2, self),}
+        self.cars = {Car(1, 2, self), Car(2, 2, self),}
     elseif self.num_players == 4 then
-        cars = {Monster(1, 4, self), Monster(2, 4, self),
-                Monster(3, 4, self), Monster(4, 4, self)}
+        self.cars = {Car(1, 4, self), Car(2, 4, self),
+                Car(3, 4, self), Car(4, 4, self)}
     end
     local objects = {Fans(world), Ball(world), Net(1, world), Net(2, world)}
     self.fans = objects[1]
     self.ball = objects[2]
-    for i, car in ipairs(cars) do
+    for i, car in ipairs(self.cars) do
         table.insert(objects, 2, car)
     end
 
@@ -134,8 +134,8 @@ function Battle:load()
     self.soundtrack:play()
 
 	local start_puns = {"start1.ogg", "start2.ogg", "start3.ogg", "start4.ogg",
-						 "start5.ogg", "start6.ogg", "start7.ogg", "start8.ogg",
-						 "start9.ogg", "start10.ogg", "start11.ogg"}
+						"start5.ogg", "start6.ogg", "start7.ogg", "start8.ogg",
+						"start9.ogg", "start10.ogg", "start11.ogg"}
     art(start_puns[mwc():random(#start_puns)]):play()
 
     love.graphics.setFont(love.graphics.newFont(20))
