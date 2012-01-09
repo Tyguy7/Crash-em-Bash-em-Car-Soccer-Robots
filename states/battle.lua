@@ -87,8 +87,9 @@ function Battle:playCrash()
     end
 end
 
-function Battle:initialize(num_players)
+function Battle:initialize(num_players, car_picks)
     self.num_players = num_players
+	self.car_picks = car_picks
 end
 
 function Battle:load()
@@ -114,13 +115,10 @@ function Battle:load()
     bound_right_shape = love.physics.newRectangleShape(bound_right_body, 0, 0, 3, 600)
     bound_right_shape:setData("boundary")
 
-    local cars = nil
-    if self.num_players == 2 then
-        self.cars = {Semi(1, 2, self), Semi(2, 2, self),}
-    elseif self.num_players == 4 then
-        self.cars = {Semi(1, 4, self), Semi(2, 4, self),
-                Semi(3, 4, self), Semi(4, 4, self)}
-    end
+    self.cars = {}
+    for i=1,self.num_players do
+		table.insert(self.cars, self.car_picks[i](i, self.num_players, self))
+	end
     local objects = {Fans(world), Ball(world), Net(1, world), Net(2, world)}
     self.fans = objects[1]
     self.ball = objects[2]
@@ -233,5 +231,7 @@ function Battle:update(dt)
 end
 
 function Battle:keypressed(key) end
+
+function Battle:joystickpressed(key) end
 
 return Battle

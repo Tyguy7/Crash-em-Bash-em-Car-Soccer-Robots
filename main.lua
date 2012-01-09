@@ -1,3 +1,5 @@
+local MainMenu = require "states.mainmenu"
+
 local state = nil
 
 function love.load()
@@ -8,7 +10,7 @@ function love.load()
 	logging = love.filesystem.newFile("logfile.txt")
 	logging:open("a")
 
-	state = require "states.mainmenu"
+	state = MainMenu()
 	while not state:load() do end
 end
 
@@ -28,4 +30,8 @@ function love.keypressed(key)
 		love.event.push("q")
 	end
 	state:keypressed(key)
+end
+
+function love.joystickpressed(joystick, button)
+	state:joystickpressed(joystick, button)
 end

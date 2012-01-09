@@ -1,111 +1,147 @@
 require "math"
+require "table"
 
 require "libs.art"
+require "libs.middleclass"
+require "libs.interpolation"
 local Soundtrack = require "libs.soundtrack"
 
 local Battle = require "states.battle"
+local Car = require "objects.car"
+local Monster = require "objects.monster"
+local Semi = require "objects.semi"
 
-local state = {}
+local PlayerPane = class("PlayerPane")
 
-local function startGame(num_players)
-	state.fadingOut = true
-	state.fadeoutOpacity = 0
-	state.music:fadeOut(30)
-	assert(num_players)
-	state.num_players = num_players
+--function PlayerPane:initialize
+
+local MainMenu = class("MainMenu")
+
+MainMenu.static.PICKS = {{Car, "Car"}, {Monster, "Monster"}, {Semi, "Semi"}}
+MainMenu.static.PANE_COLORS = {{255,0,0}, {0,0,255}, {234,97,216}, {97,226,234}}
+
+function MainMenu:startGame()
+	self.fadingOut = true
+	self.fadeoutOpacity = 0
+	self.music:fadeOut(30)
+	self.car_picks = {}
+	for i, pane in ipairs(self.panes) do
+		table.insert(self.car_picks, self.class.PICKS[pane.pick][1])
+	end
 end
 
-local function goToSetup(data)
-
+function MainMenu:updatePane(pane_no)
+	local pane = self.panes[pane_no]
+	pane.object = self.class.PICKS[pane.pick][1](pane_no, 4, {world=self.world})
+	pane.object.body:setPosition(pane_no*200 - 100, 200)
+	pane.object.body:setAngle(0)
+	pane.text = self.class.PICKS[pane.pick][2]
 end
 
-function state:load()
+function MainMenu:load()
 	love.graphics.setBackgroundColor(0, 0, 0)
+
 	self.title = art("title.png")
+
 	self.music = Soundtrack{"title.ogg", "w_a_r_by_awesome.xm",
 							"aceman_-_my_first_console.xm"}
+	self.music:play()
 
-	self.selection = 1
-	self.choices = {{"2-Player", startGame, 2},
-					{"4-Player", startGame, 4},
-					{"Setup", goToSetup, nil}
-					}
+	self.world = love.physics.newWorld(0, 0, 800, 600)
 
-	self.fadeInLength = 3.5
+	self.panes = {{pick=1, enabled=true},
+				  {pick=1, enabled=true},
+				  {pick=1, enabled=true},
+				  {pick=1, enabled=true}}
+	for i=1,#self.panes do
+		self:updatePane(i)
+	end
+
+	self.title_opacity_func = linearAnimation(0, 3.5, 0, 255)
+	self.title_y_func = linearAnimation(3.8, 4.0, 236, -15)
+	self.pane_opacity_func = linearAnimation(4.7, 5.3, 0, 255)
 	self.counter = 0
-
-	self.title_y = 44
-	self.selection_opacity = 0
-
-	self.selection_min_y = 250
-	self.selection_max_y = 500
 
 	love.graphics.setFont(love.graphics.newFont(30))
 
-	self.music:play()
 	return true
 end
 
-function state:keypressed(key)
-	if key == "up" then
-		self.selection = self.selection - 1
-	elseif key == "down" then
-		self.selection = self.selection + 1
-	end
-	if self.selection > #self.choices then
-		self.selection = 1
-	elseif self.selection < 1 then
-		self.selection = #self.choices
-	end
-
-	if key == "return" or key == " " then
-		local event = self.choices[self.selection][2]
-		local data = self.choices[self.selection][3]
-		event(data)
+function MainMenu:keypressed(key)
+	local number = tonumber(key)
+	if number and number >= 1 and number <= 4 then
+		self.panes[number].enabled = not self.panes[number].enabled
+	elseif key == "return" then
+		self:startGame()
 	end
 end
 
-function state:update(dt)
+function MainMenu:joystickpressed(joystick, button)
+	if button == 1 then
+		local new_pick = self.panes[joystick+1].pick + 1
+		if new_pick > #self.class.PICKS then
+			new_pick = 1
+		end
+		self.panes[joystick+1].pick = new_pick
+		self:updatePane(joystick+1)
+	elseif button == 3 then
+		local new_pick = self.panes[joystick+1].pick - 1
+		if new_pick <= 0 then
+			new_pick = #self.class.PICKS
+		end
+		self.panes[joystick+1].pick = new_pick
+		self:updatePane(joystick+1)
+	end
+end
+
+function MainMenu:update(dt)
 	self.music:update(dt)
 	self.counter = self.counter + dt
 
-	local y_pos_counter = math.min(math.max(3.8, self.counter), 4.0)
-	self.title_y = y_pos_counter*-800 + 3084
-
-	local sel_opacity_counter =  math.min(math.max(5.33, self.counter-.5), 5.83)
-	self.selection_opacity = sel_opacity_counter*510 - 2718.3
+	self.title_y = self.title_y_func(self.counter)
 
 	if self.fadingOut then
 		self.fadeoutOpacity = self.fadeoutOpacity + 8 * dt * 60
 		self.fadeoutOpacity = math.min(255, self.fadeoutOpacity)
 		if self.fadeoutOpacity >= 255 then
-			local battle_state = Battle(self.num_players)
+			local battle_state = Battle(4, self.car_picks)
 			battle_state:load()
 			return battle_state
 		end
 	end
 
+	for i, pane in ipairs(self.panes) do
+		pane.object.body:setAngle(self.counter * 2)
+	end
+
 	return self
 end
 
-function state:draw()
+function MainMenu:draw()
 	love.graphics.clear()
 
 	--draw title
-	local opacity = math.min(1, self.counter/self.fadeInLength)*255
+	local opacity = self.title_opacity_func(self.counter)
 	love.graphics.setColor(255, 255, 255, opacity)
 	love.graphics.draw(self.title, 144, self.title_y)
 
-	--draw selections
-	local choice_y_factor = (self.selection_max_y - self.selection_min_y)/(#self.choices - 1)
-	for i, choice in ipairs(self.choices) do
-		if i == self.selection then
-			love.graphics.setColor(255, 100, 100, self.selection_opacity)
-		else
-			love.graphics.setColor(255, 255, 255, self.selection_opacity)
+	--draw panes
+	local pane_opacity = self.pane_opacity_func(self.counter)
+	for i, pane in ipairs(self.panes) do
+		local r, g, b = unpack(self.class.PANE_COLORS[i])
+		if not pane.enabled then
+			r, g, b = 64 + r/7, 64 + g/7, 64 + b/7
 		end
-		local y = self.selection_min_y + ((i-1)*choice_y_factor)
-		love.graphics.printf(choice[1], 0, y, 800, "center")
+		love.graphics.setColor(r, g, b, pane_opacity)
+		love.graphics.rectangle("fill", (i-1)*200, 100, 200, 600)
+		love.graphics.setColor(156, 156, 156, pane_opacity)
+		love.graphics.rectangle("fill", (i-1)*200 + 50, 150, 100, 100)
+
+		pane.object.color[4] = pane_opacity
+		pane.object:draw()
+
+		love.graphics.setColor(255, 255, 255, pane_opacity)
+		love.graphics.printf(pane.text, (i-1)*200, 300, 200, "center")
 	end
 
 	if self.fadingOut then
@@ -114,4 +150,4 @@ function state:draw()
 	end
 end
 
-return state
+return MainMenu
