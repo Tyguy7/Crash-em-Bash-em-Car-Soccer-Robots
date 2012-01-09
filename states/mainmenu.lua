@@ -17,7 +17,7 @@ local PlayerPane = class("PlayerPane")
 
 local MainMenu = class("MainMenu")
 
-MainMenu.static.PICKS = {{Car, "Car"}, {Monster, "Monster"}, {Semi, "Semi"}}
+MainMenu.static.PICKS = {Car, Monster, Semi}
 MainMenu.static.PANE_COLORS = {{255,0,0}, {0,0,255}, {234,97,216}, {97,226,234}}
 
 function MainMenu:startGame()
@@ -26,16 +26,20 @@ function MainMenu:startGame()
 	self.music:fadeOut(30)
 	self.car_picks = {}
 	for i, pane in ipairs(self.panes) do
-		table.insert(self.car_picks, self.class.PICKS[pane.pick][1])
+		local insert = nil
+		if pane.enabled then
+			insert = self.class.PICKS[pane.pick]
+		end
+		table.insert(self.car_picks, insert)
 	end
 end
 
 function MainMenu:updatePane(pane_no)
 	local pane = self.panes[pane_no]
-	pane.object = self.class.PICKS[pane.pick][1](pane_no, 4, {world=self.world})
+	pane.object = self.class.PICKS[pane.pick](pane_no, 4, {world=self.world})
 	pane.object.body:setPosition(pane_no*200 - 100, 200)
 	pane.object.body:setAngle(0)
-	pane.text = self.class.PICKS[pane.pick][2]
+	pane.text = self.class.PICKS[pane.pick].name
 end
 
 function MainMenu:load()
