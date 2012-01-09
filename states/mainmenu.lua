@@ -63,7 +63,7 @@ function MainMenu:load()
 
 	self.title_opacity_func = linearAnimation(0, 3.5, 0, 255)
 	self.title_y_func = linearAnimation(3.8, 4.0, 236, -15)
-	self.pane_opacity_func = linearAnimation(4.7, 5.3, 0, 255)
+	self.pane_opacity_func = linearAnimation(5.7, 6.2, 0, 255)
 	self.counter = 0
 
 	love.graphics.setFont(love.graphics.newFont(30))
