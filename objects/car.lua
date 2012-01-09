@@ -2,6 +2,7 @@ require "math"
 
 require "libs.middleclass"
 require "libs.art"
+require "libs.deepcopy"
 
 local GameObject = require "objects.gameobject"
 
@@ -59,7 +60,7 @@ function Car:initialize(player, no_of_players, state)
 												self.class.HEIGHT)
 
 	local info = self.class.INFO[player]
-	self.color = info.color
+	self.color = deepcopy(info.color)
 	self.shape:setData(info.data)
 	self.image = art(self.class.IMAGE)
 	self.tire_mark_image = art(self.class.TIRE_MARK_IMAGE)
@@ -99,18 +100,24 @@ function Car:addTireMarks()
 end
 
 function Car:update()
-	if love.keyboard.isDown(self.keys.left) then
-        self.body:applyTorque(-self.class.TURN_TORQUE)
-    end
-    if love.keyboard.isDown(self.keys.right) then
-        self.body:applyTorque(self.class.TURN_TORQUE)
-    end
-    if love.keyboard.isDown(self.keys.up) then
-        self.body:applyForce(self.body:getWorldVector(self.class.FORWARD,0))
-    end
-    if love.keyboard.isDown(self.keys.down) then
-        self.body:applyForce(self.body:getWorldVector(self.class.REVERSE,0))
-    end
+	local direction = love.joystick.getHat(self.player-1, 0)
+	local left = {l=true, ld=true, lu=true}
+	local right = {r=true, rd=true, ru=true}
+	local up = {u=true, ru=true, lu=true}
+	local down = {d=true, ld=true, rd=true}
+
+	if left[direction] then
+		self.body:applyTorque(-self.class.TURN_TORQUE)
+	end
+	if right[direction] then
+		self.body:applyTorque(self.class.TURN_TORQUE)
+	end
+	if up[direction] then
+		self.body:applyForce(self.body:getWorldVector(self.class.FORWARD,0))
+	end
+	if down[direction] then
+		self.body:applyForce(self.body:getWorldVector(self.class.REVERSE,0))
+	end
 
 	if shouldScreech(self.body) then
 		if not self.screeching then
