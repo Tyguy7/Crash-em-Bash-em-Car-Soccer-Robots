@@ -2,6 +2,12 @@ local MainMenu = require "states.mainmenu"
 
 local state = nil
 
+local function cleanExit()
+	logging:close()
+	love.filesystem.remove("logfile.txt")
+	love.event.push("q")
+end
+
 function love.load()
 	love.graphics.setMode(800, 600, true)
 	love.graphics.setCaption("Crash 'Em Bash 'Em Car Soccer Robots")
@@ -22,15 +28,13 @@ end
 function love.update(dt)
 	state = state:update(dt)
 	if state == nil then
-		love.event.push("q")
+		cleanExit()
 	end
 end
 
 function love.keypressed(key)
 	if key == "escape" then
-		logging:close()
-		love.filesystem.remove("logfile.txt")
-		love.event.push("q")
+		cleanExit()
 	end
 	state:keypressed(key)
 end
