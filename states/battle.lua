@@ -133,11 +133,6 @@ function Battle:load()
     self.soundtrack = Soundtrack{"dope.mod", "iphar_aldeas_funk.mod"}
     self.soundtrack:play()
 
-	local start_puns = {"start1.ogg", "start2.ogg", "start3.ogg", "start4.ogg",
-						"start5.ogg", "start6.ogg", "start7.ogg", "start8.ogg",
-						"start9.ogg", "start10.ogg", "start11.ogg"}
-    art(start_puns[mwc():random(#start_puns)]):play()
-
     love.graphics.setFont(love.graphics.newFont(20))
 
     self.crash1 = art("crash-01.ogg")
