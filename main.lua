@@ -4,8 +4,9 @@ local state = nil
 
 function love.load()
 	love.graphics.setMode(800, 600, true)
+	love.graphics.setCaption("Crash 'Em Bash 'Em Car Soccer Robots")
 
-	love.filesystem.setIdentity("Crash 'Em Bash 'Em")
+	love.filesystem.setIdentity("Crash 'Em Bash 'Em Car Soccer Robots")
 
 	logging = love.filesystem.newFile("logfile.txt")
 	logging:open("a")
@@ -27,6 +28,8 @@ end
 
 function love.keypressed(key)
 	if key == "escape" then
+		logging:close()
+		love.filesystem.remove("logfile.txt")
 		love.event.push("q")
 	end
 	state:keypressed(key)
